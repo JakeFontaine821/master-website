@@ -78,7 +78,7 @@ export default class landingPage extends HTMLElement{
                 try{
                     // const response = await fetch('http://localhost:3000/nytimes/mini/times/today');
                     // const response = await fetch('https://server-lkt6.onrender.com/nytimes/mini/times/today');
-                    const response = await fetch('https://jfontaine.dev/nytimes/mini/times/today');
+                    const response = await fetch('/nytimes/mini/times/today');
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
                     mini_dailyBoardFetch = response;
 
@@ -111,7 +111,7 @@ export default class landingPage extends HTMLElement{
                 try{
                     // const response = await fetch('http://localhost:3000/nytimes/mini/times/leaderboard');
                     // const response = await fetch('https://server-lkt6.onrender.com/nytimes/mini/times/leaderboard');
-                    const response = await fetch('https://jfontaine.dev/nytimes/mini/times/leaderboard');
+                    const response = await fetch('/nytimes/mini/times/leaderboard');
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
                     mini_leaderBoardFetch = response;
 
