@@ -1,6 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <script type="module" src="/pages/nytimes/components/PageRoot.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .nav-panel{
+            position: relative;
+            height: 100vh;
+            width: 75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            padding: 15px 0px;
+        }
+
+        .nav-panel > *{
+            height: 60px;
+            width: 60px;
+            fill: var(--text);
+        }
+
+        .nav-panel svg{
+            height: 35px;
+            width: 35px;
+        }
+
+        .nav-panel .button{
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-panel .selection-highlight{
+            position: absolute;
+            border-radius: 15px;
+            background-color: var(--accent);
+            z-index: -1;
+            top: 15px;
+            transition: top .2s;
+            pointer-events: none;
+        }
+
+        .page{
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .page .page-container{
+            position: relative;
+            width: 65vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+
+    <script type="module" src="/pages/nytimes/components/landingPage.js"></script>
+    <script type="module" src="/pages/nytimes/components/miniPage.js"></script>
 </head>
 <body>
-    <page-root></page-root>
+    <landing-page></landing-page>
+    <mini-page></mini-page>
+    <daily-page></daily-page>
+
+    <!--  NAV PANEL -->
+    <div class="nav-panel">
+        <div class="button selected" page="landing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></div>
+        <div class="button" page="mini" disabled><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="15" y="15" width="170" height="170" rx="20" ry="20" fill="#8bbcf6" stroke="#000" stroke-width="10"/><path d="m100 20 80 80-80 80-80-80z"/><path fill="#fff" d="m100 30 35 35-35 35-35-35zm0 70 35 35-35 35-35-35z"/></svg></div>
+        <div class="button" page="daily" disabled><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="15" y="15" width="170" height="170" rx="20" ry="20" stroke="#000" stroke-width="10"/><path fill="#fff" d="M75 16h52v52H75zM16 74h52v52H16zm116 0h52v52h-52zm-58 58h52v52H74zM35 16h33v52H16V35a20 20 0 0 1 19-19m97 116h52v33a20 20 0 0 1-19 19h-33Z"/></svg></div>
+        <div class="selection-highlight"></div>
+    </div>
+
+    <!-- js teehee -->
+    <script>
+        const miniPage = document.querySelector('mini-page');
+        miniPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="mini"]').removeAttribute('disabled'));
+
+        const dailyPage = document.querySelector('daily-page');
+        dailyPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="daily"]').removeAttribute('disabled'));
+
+        // Set up the nav buttons
+        const navSelectionHighlighter = document.querySelector('.nav-panel .selection-highlight');
+        const navContainer = document.querySelector('.nav-panel');
+
+        for(const [i, button] of Array.from(navContainer.children).entries()){
+            button.addEventListener('click', () => {
+                if(button.classList.contains('selected')){ return; }
+
+                const currentButton = navContainer.querySelector('.selected');
+                currentButton.classList.remove('selected');
+                
+                const currentPage = document.querySelector(`.page.${currentButton.getAttribute('page')}-page`);
+                currentPage.hide();
+
+                navSelectionHighlighter.style.top = `${(i * 60) + 15}px`;
+                button.classList.add('selected');
+
+                const newPage = document.querySelector(`.page.${button.getAttribute('page')}-page`);
+                newPage.show();
+            });
+        }
+    </script>
 </body>
+</html>
