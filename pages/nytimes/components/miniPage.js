@@ -390,7 +390,6 @@ export default class MiniPage extends HTMLElement{
                 // Switch the direction and set the new selected clue
                 if(e.key === 'Tab'){
                     e.preventDefault();
-
                     switchDirection();
                     return;
                 }
@@ -407,13 +406,45 @@ export default class MiniPage extends HTMLElement{
                     return;
                 }
 
-                // if(e.key === 'ArrowUp'){ // Dont worry about it
-                //     const selectedCell = this.querySelector('.grid-cell.selected');
-                //     const indexOfSelectedCell = this.cellArray.findIndex(cell => cell === selectedCell);
+                // Helper function cause arrow keys use the same shit every time
+                const arrorKeyMoveFunction = (keyPressed) => {
+                    const selectedCell = this.querySelector('.grid-cell.selected');
+                    const indexOfSelectedCell = this.cellArray.findIndex(cell => cell === selectedCell);
 
-                //     selectedCell.classList.remove('selected');
-                //     this.cellArray[indexOfSelectedCell - dataBody.dimensions.width].classList.add('selected');
-                // }
+                    // Loop around the direction until it finds a non-blank cell than can be selected
+                    const desiredCellIndex = (() => {
+                        for (let i = 1; i <= dataBody.dimensions.width; i++) {
+                            const desiredIndex = {
+                                'ArrowUp': (indexOfSelectedCell + this.cellArray.length - (dataBody.dimensions.width * i)) % this.cellArray.length,
+                                'ArrowDown': (indexOfSelectedCell + this.cellArray.length + (dataBody.dimensions.width * i)) % this.cellArray.length,
+                                'ArrowLeft': (() => {
+                                    const yLevelBuffer = Math.floor(indexOfSelectedCell / dataBody.dimensions.width) * dataBody.dimensions.width;
+                                    const currentIndexIgnoringY = indexOfSelectedCell % dataBody.dimensions.width;
+                                    return ((currentIndexIgnoringY - i + dataBody.dimensions.width) % dataBody.dimensions.width) + yLevelBuffer;
+                                })(),
+                                'ArrowRight': (() => {
+                                    const yLevelBuffer = Math.floor(indexOfSelectedCell / dataBody.dimensions.width) * dataBody.dimensions.width;
+                                    const currentIndexIgnoringY = indexOfSelectedCell % dataBody.dimensions.width;
+                                    return ((currentIndexIgnoringY + i + dataBody.dimensions.width) % dataBody.dimensions.width) + yLevelBuffer;
+                                })()
+                            }[keyPressed];
+                            if(!this.cellArray[desiredIndex].classList.contains('blank')){ return desiredIndex; }
+                        }
+                    })();
+
+                    // clear current selections
+                    for(const cell of this.querySelectorAll('.grid-cell.selected')){ cell.classList.remove('selected'); }
+
+                    // Set new cell
+                    this.cellArray[desiredCellIndex].classList.add('selected');
+                    selectClue(this.clueElements[this.cellArray[desiredCellIndex].clues[direction]], true);
+                };
+
+                // Arrow keys navigate the board, all that changes between them is math
+                if(e.key === 'ArrowUp'){ arrorKeyMoveFunction('ArrowUp'); }
+                else if(e.key === 'ArrowDown'){ arrorKeyMoveFunction('ArrowDown'); }
+                else if(e.key === 'ArrowLeft'){ arrorKeyMoveFunction('ArrowLeft'); }
+                else if(e.key === 'ArrowRight'){ arrorKeyMoveFunction('ArrowRight'); }
             });
 
             // Setup reveal functions
