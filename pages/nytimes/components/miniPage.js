@@ -170,9 +170,9 @@ export default class MiniPage extends HTMLElement{
 
             while (!apiCall) {
                 try{
-                    const response = await fetch('http://localhost:3000/nytimes/mini');
+                    // const response = await fetch('http://localhost:3000/nytimes/mini');
                     // const response = await fetch('https://server-lkt6.onrender.com/nytimes/mini');
-                    // const response = await fetch('http://kmontambault.freeddns.org:62999/nyt/nytimes/mini');
+                    const response = await fetch('https://jfontaine.dev/nytimes/mini');
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
                     apiCall = response;
@@ -457,9 +457,9 @@ export default class MiniPage extends HTMLElement{
             winPopup.addEventListener('submit', async ({name}) => {
                 try{
                     this.saveObject['name'] = name;
-                    const saveResponse = await fetch('http://localhost:3000/nytimes/mini/time/set', {
+                    // const saveResponse = await fetch('http://localhost:3000/nytimes/mini/time/set', {
                     // const saveResponse = await fetch('https://server-lkt6.onrender.com/nytimes/mini/time/set', {
-                    // const saveResponse = await fetch('http://kmontambault.freeddns.org:62999/nyt/nytimes/mini/time/set', {
+                    const saveResponse = await fetch('https://jfontaine.dev/nytimes/mini/time/set', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(this.saveObject)
