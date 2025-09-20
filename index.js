@@ -47,7 +47,7 @@ const NYTIMES_SECOND_INTERVAL = setInterval(() => {
 
                 const NYTIMES_HOURLY_INTERVAL = setInterval(() => {
                     console.log('Checking hour', Utils.getCurrentUTCHour());
-                    if(Utils.getCurrentUTCHour() === 4){ updateNytimesGames(); } // Will update games at 12:00:30 am every day
+                    if(Utils.getCurrentUTCHour() === 4){ updateNytimesGames(); } // Will update games at 12:00:30 am every day ETC
                 }, Utils.getTimeInMilliseconds({ hours: 1 }));
             }
         }, Utils.getTimeInMilliseconds({ minutes: 1 }));
