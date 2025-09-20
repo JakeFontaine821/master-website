@@ -22,15 +22,15 @@ function getTimeInMilliseconds(params){
     return Math.max(convertedTime.reduce((acc, cur) => acc += cur, 0), 1000); // no less than a second
 };
 
-function getCurrentSecond(){
+function getCurrentUTCSecond(){
     return new Date(Date.now()).getUTCSeconds();
 };
 
-function getCurrentMinute(){
+function getCurrentUTCMinute(){
     return new Date(Date.now()).getUTCMinutes();
 };
 
-function getCurrentHour(){
+function getCurrentUTCHour(){
     return new Date(Date.now()).getUTCHours();
 };
 

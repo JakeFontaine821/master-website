@@ -36,18 +36,18 @@ async function updateNytimesGames(){
 (async () => await updateNytimesGames())();
 
 const NYTIMES_SECOND_INTERVAL = setInterval(() => {
-    console.log('Checking second', Utils.getCurrentSecond());
-    if(Utils.getCurrentSecond() === 30){
+    console.log('Checking second', Utils.getCurrentUTCSecond());
+    if(Utils.getCurrentUTCSecond() === 30){
         clearInterval(NYTIMES_SECOND_INTERVAL);
 
         const NYTIMES_MINUTE_INTERVAL = setInterval(() => {
-            console.log('Checking minute', Utils.getCurrentMinute());
-            if(!Utils.getCurrentMinute()){
+            console.log('Checking minute', Utils.getCurrentUTCMinute());
+            if(!Utils.getCurrentUTCMinute()){
                 clearInterval(NYTIMES_MINUTE_INTERVAL);
 
                 const NYTIMES_HOURLY_INTERVAL = setInterval(() => {
-                    console.log('Checking hour', Utils.getCurrentHour());
-                    if(!Utils.getCurrentHour()){ updateNytimesGames(); } // Will update games at 12:00:30 am every day
+                    console.log('Checking hour', Utils.getCurrentUTCHour());
+                    if(Utils.getCurrentUTCHour() === 4){ updateNytimesGames(); } // Will update games at 12:00:30 am every day
                 }, Utils.getTimeInMilliseconds({ hours: 1 }));
             }
         }, Utils.getTimeInMilliseconds({ minutes: 1 }));
