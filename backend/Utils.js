@@ -41,8 +41,8 @@ function getEasternDateString() {
 module.exports = {
     sendRequest,
     getTimeInMilliseconds,
-    getCurrentSecond,
-    getCurrentMinute,
-    getCurrentHour,
+    getCurrentUTCSecond,
+    getCurrentUTCMinute,
+    getCurrentUTCHour,
     getEasternDateString,
 };
