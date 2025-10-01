@@ -82,8 +82,11 @@
 
     <!-- js teehee -->
     <script>
+        const landingPage = document.querySelector('landing-page');
+
         const miniPage = document.querySelector('mini-page');
         miniPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="mini"]').removeAttribute('disabled'));
+        miniPage.addEventListener('reload-leaderboards', () => landingPage.reloadLeaderboards(['mini']));
 
         const dailyPage = document.querySelector('daily-page');
         dailyPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="daily"]').removeAttribute('disabled'));

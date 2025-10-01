@@ -496,7 +496,10 @@ export default class MiniPage extends HTMLElement{
                     const data = await saveResponse.json();
                     if (!data.success) { throw new Error(data.error); }
 
-                    setTimeout(() => winPopup.showSavedText(), 300);
+                    setTimeout(() => {
+                        winPopup.showSavedText();
+                        this.dispatchEvent(new Event('reload-leaderboards'));
+                    }, 300);
                 }
                 catch(err){ console.error('Error saving time: ', err); }
             });

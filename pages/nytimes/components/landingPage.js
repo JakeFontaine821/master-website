@@ -68,10 +68,11 @@ export default class landingPage extends HTMLElement{
             </div>
         `;
 
-        (async () => {
-            /**********************************************************************************************************************/
-            /*                         LOAD IN THE DAILY LEADERBOARD                                                              */
-            /**********************************************************************************************************************/
+        this.reloadLeaderboards();
+    };
+
+    async reloadLeaderboards(games=[]){
+        if(games.includes('mini')){
             let minileaderboardInfo;
             while (!minileaderboardInfo?.success) {
                 try{
@@ -90,6 +91,7 @@ export default class landingPage extends HTMLElement{
             // Sort the entries for the day list
             const sortedTodayTimes = minileaderboardInfo.today.sort((a, b) => a.time - b.time);
             const dailyboardInner = this.querySelector('.mini-daily-board .leaderboard-inner');
+            while(dailyboardInner.firstChild){ dailyboardInner.firstChild.remove(); }
             for(const [i, entry] of sortedTodayTimes.entries()){
                 const newEntry = new leaderboardEntry(entry, i+1);
                 dailyboardInner.appendChild(newEntry);
@@ -97,11 +99,13 @@ export default class landingPage extends HTMLElement{
 
             const sortedBestTimes = minileaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
             const alltimeboardInner = this.querySelector('.mini-leaderboard .leaderboard-inner');
+            while(alltimeboardInner.firstChild){ alltimeboardInner.firstChild.remove(); }
             for(const [i, entry] of sortedBestTimes.entries()){
                 const newEntry = new leaderboardEntry(entry, i+1);
                 alltimeboardInner.appendChild(newEntry);
             }
-        })();
+        }
+        // if(){} other games
     };
 
     show(){
