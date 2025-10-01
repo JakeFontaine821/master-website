@@ -68,7 +68,7 @@ export default class landingPage extends HTMLElement{
             </div>
         `;
 
-        this.reloadLeaderboards();
+        this.reloadLeaderboards(['mini']);
     };
 
     async reloadLeaderboards(games=[]){
