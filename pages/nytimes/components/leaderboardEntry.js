@@ -51,7 +51,10 @@ export default class leaderboardEntry extends HTMLElement{
             <div class="name">${entryData.name}</div>
             <div class="name">${formatSecondsToHMS(entryData.time)}</div>
             <div class="date-scored ${showDate ? '' : 'hidden'}">${parsedDate.toDateString()}</div>
-            <div class="checks-used ${showDate ? 'hidden' : ''}" ${entryData.revealUsed ? 'title="Reveal Used"' : ''}>${entryData.checksUsed} checks used${entryData.revealUsed ? '*' : ''}</div>
+            ${entryData.revealUsed === 'true' ?
+                `<div class="checks-used ${showDate ? 'hidden' : ''}" 'title="Reveal Used"'>${entryData.checksUsed} checks used*</div>` :
+                `<div class="checks-used ${showDate ? 'hidden' : ''}">${entryData.checksUsed} checks used</div>`
+            }
         `;
     };
 };

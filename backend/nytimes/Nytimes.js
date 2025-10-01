@@ -88,9 +88,30 @@ async function getLetterBoxed(){
     return { success: false };
 };
 
+const NyTimesResponses = new Map();
+
+async function updateNytimesGames(){
+    console.log('Updating game objects');
+
+    const miniResponse = await getMiniCrossword();
+    NyTimesResponses.set('miniCrossword', miniResponse);
+
+    const dailyResponse = await getDaily();
+    NyTimesResponses.set('daily', dailyResponse);
+
+    const connectionsResponse = await getConnections();
+    NyTimesResponses.set('connections', connectionsResponse);
+
+    const letterBoxedResponse = await getLetterBoxed();
+    NyTimesResponses.set('letterBoxed', letterBoxedResponse);
+};
+updateNytimesGames();
+
 module.exports = {
+    gameBoards: NyTimesResponses,
     getMiniCrossword,
     getDaily,
     getConnections,
     getLetterBoxed,
+    updateNytimesGames,
 };

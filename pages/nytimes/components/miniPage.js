@@ -170,8 +170,6 @@ export default class MiniPage extends HTMLElement{
 
             while (!apiCall) {
                 try{
-                    // const response = await fetch('http://localhost:3000/nytimes/mini');
-                    // const response = await fetch('https://server-lkt6.onrender.com/nytimes/mini');
                     const response = await fetch('/nytimes/mini');
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
@@ -200,7 +198,7 @@ export default class MiniPage extends HTMLElement{
                 'time': 0,
                 'dateString': miniJson.data.publicationDate,
                 'checksUsed': 0,
-                'revealUsed': 0,
+                'revealUsed': 'false',
             };
 
             const selectClue = (clueElement, keepSelectedCell=false) => {
@@ -452,17 +450,17 @@ export default class MiniPage extends HTMLElement{
             revealDropdown.addEventListener('cell', () => {
                 if(!this.playing){ return; }
                 this.querySelector('.grid-cell.selected').reveal();
-                this.saveObject['revealUsed'] = 1;
+                this.saveObject['revealUsed'] = 'true';
             });
             revealDropdown.addEventListener('word', () => {
                 if(!this.playing){ return; }
                 for(const cell of this.querySelectorAll('.grid-cell.highlighted')){ cell.reveal(); }
-                this.saveObject['revealUsed'] = 1;
+                this.saveObject['revealUsed'] = 'true';
             });
             revealDropdown.addEventListener('puzzle', () => {
                 if(!this.playing){ return; }
                 for(const cell of this.cellArray){ cell.reveal(); }
-                this.saveObject['revealUsed'] = 1;
+                this.saveObject['revealUsed'] = 'true';
             });
 
             // Setup check functions
@@ -488,9 +486,7 @@ export default class MiniPage extends HTMLElement{
             winPopup.addEventListener('submit', async ({name}) => {
                 try{
                     this.saveObject['name'] = name;
-                    // const saveResponse = await fetch('http://localhost:3000/nytimes/mini/time/set', {
-                    // const saveResponse = await fetch('https://server-lkt6.onrender.com/nytimes/mini/time/set', {
-                    const saveResponse = await fetch('/nytimes/mini/time/set', {
+                    const saveResponse = await fetch('/nytimes/mini/times/set', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(this.saveObject)

@@ -23,15 +23,19 @@ function getTimeInMilliseconds(params){
 };
 
 function getCurrentUTCSecond(){
-    return new Date(Date.now()).getUTCSeconds();
+    return new Date().getUTCSeconds();
 };
 
 function getCurrentUTCMinute(){
-    return new Date(Date.now()).getUTCMinutes();
+    return new Date().getUTCMinutes();
 };
 
 function getCurrentUTCHour(){
-    return new Date(Date.now()).getUTCHours();
+    return new Date().getUTCHours();
+};
+
+function getCurrentESTHour(){
+    return (new Date().getUTCHours() + 19) % 24;
 };
 
 function getEasternDateString() {
@@ -44,5 +48,6 @@ module.exports = {
     getCurrentUTCSecond,
     getCurrentUTCMinute,
     getCurrentUTCHour,
+    getCurrentESTHour,
     getEasternDateString,
 };
