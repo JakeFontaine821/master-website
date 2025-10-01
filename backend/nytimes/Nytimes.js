@@ -1,5 +1,6 @@
 const path = require('path');
 const Utils = require(path.join(__dirname, '../Utils.js'));
+const NytimesDatabase = require(path.join(__dirname, './NytimesDatabase.js'));
 
 async function getMiniCrossword(){
     const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini.json';
@@ -95,6 +96,7 @@ async function updateNytimesGames(){
 
     const miniResponse = await getMiniCrossword();
     NyTimesResponses.set('miniCrossword', miniResponse);
+    NytimesDatabase.addNewGameBoard(miniResponse);
 
     const dailyResponse = await getDaily();
     NyTimesResponses.set('daily', dailyResponse);
