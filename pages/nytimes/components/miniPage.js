@@ -388,13 +388,14 @@ export default class MiniPage extends HTMLElement{
                 // Switch the direction and set the new selected clue
                 if(e.key === 'Tab'){
                     e.preventDefault();
-                    switchDirection();
+                    if(this.playing){ switchDirection(); }
                     return;
                 }
 
                 // Move to the next clue
                 if(e.key === 'Enter'){
                     e.preventDefault();
+                    if(!this.playing){ return; }
 
                     const currentClueIndex = this.clueElements.findIndex(element => element.classList.contains('highlighted'));
                     const newClueElement = this.clueElements[(currentClueIndex+1) % this.clueElements.length];
