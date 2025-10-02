@@ -8,7 +8,7 @@ AddStyle(`
         width: 300px;
         font-weight: 500;
         gap: 5px;
-        padding: 2px 6px;
+        padding: 2px 10px;
     }
 
     .leaderboard-entry > div{

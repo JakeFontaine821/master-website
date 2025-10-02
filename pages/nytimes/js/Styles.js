@@ -19,6 +19,8 @@ AddStyle(`
         --accent: #e19b9b;
         --correct: #3333cc;
         --incorrect: #cc3333;
+        --mini-theme:#8bbcf6;
+        --daily-theme: #9f9f9f;
     }
 
     body{
