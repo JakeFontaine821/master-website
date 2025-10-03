@@ -371,32 +371,29 @@ export default class MiniPage extends HTMLElement{
 
             // Define player input
             document.addEventListener('keydown', (e) => {
-                if(this.classList.contains('hidden')){ return; }
+                e.preventDefault();
+                if(this.classList.contains('hidden') || !this.playing){ return; }
 
                 // Player input for selected square
                 if(/^[a-zA-Z]$/.test(e.key)){
-                    if(this.playing){ this.querySelector('.grid-cell.selected').value = e.key.toUpperCase(); }
+                    this.querySelector('.grid-cell.selected').value = e.key.toUpperCase();
                     return;
                 }
 
                 // Remove the value from the current selected cell and move one square back in the selected word
                 if(e.key === 'Backspace'){
-                    if(this.playing){ this.querySelector('grid-cell.selected').clear(true); }
+                    this.querySelector('grid-cell.selected').clear(true);
                     return;
                 }
 
                 // Switch the direction and set the new selected clue
                 if(e.key === 'Tab'){
-                    e.preventDefault();
-                    if(this.playing){ switchDirection(); }
+                    switchDirection();
                     return;
                 }
 
                 // Move to the next clue
                 if(e.key === 'Enter'){
-                    e.preventDefault();
-                    if(!this.playing){ return; }
-
                     const currentClueIndex = this.clueElements.findIndex(element => element.classList.contains('highlighted'));
                     const newClueElement = this.clueElements[(currentClueIndex+1) % this.clueElements.length];
 
