@@ -371,8 +371,8 @@ export default class MiniPage extends HTMLElement{
 
             // Define player input
             document.addEventListener('keydown', (e) => {
-                e.preventDefault();
                 if(this.classList.contains('hidden') || !this.playing){ return; }
+                e.preventDefault();
 
                 // Player input for selected square
                 if(/^[a-zA-Z]$/.test(e.key)){

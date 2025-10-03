@@ -99,7 +99,7 @@ async function addTimeEntry(playData){
     return { success: true };
 };
 
-const getEntryStatement_mini_data = db.prepare(`SELECT * from mini_data`);
+const getEntryStatement_mini_data = db.prepare(`SELECT * from mini_data WHERE dateString=@dateString`);
 const addEntryStatement_mini_data = db.prepare(`INSERT INTO mini_data (gameBoard, dateString, averageTime) VALUES (@gameBoard, @dateString, @averageTime)`);
 async function addNewGameBoard(gameBoard){
     const databaseObj = {
@@ -109,7 +109,7 @@ async function addNewGameBoard(gameBoard){
     };
 
     try{ // only add a new one if its not already added, this supports project stopping and starting whenever
-        const currentEntry = getEntryStatement_mini_data.all();
+        const currentEntry = getEntryStatement_mini_data.all(databaseObj);
         if(!currentEntry.length){ addEntryStatement_mini_data.run(databaseObj); }
     }
     catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
