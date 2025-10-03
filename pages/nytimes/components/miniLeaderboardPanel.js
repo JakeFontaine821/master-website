@@ -70,7 +70,7 @@ AddStyle(`
     }
 
     .mini-leaderboard-panel .date-display{
-        transform: translateX(${-133.06 + 15}px);
+        transform: translateX(${-133.06 + 25}px);
         fill: var(--text);
         width: 900px;
         white-space: nowrap;
