@@ -56,6 +56,6 @@ const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 const updateEntryStatement_mini_data = db.prepare(`UPDATE mini_data SET averageTime=@averageTime WHERE dateString=@dateString`);
 const newObj = {
     dateString: Utils.getEasternDateString(),
-    averageTime: 184.25
+    averageTime: Math.round(184.25)
 };
 updateEntryStatement_mini_data.run(newObj);

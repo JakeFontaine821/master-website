@@ -86,8 +86,7 @@ async function addTimeEntry(playData){
             try{ todaysEntries = getTodaysEntriesStatement.all(updateObj); }
             catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
 
-            updateObj.averageTime = todaysEntries.reduce((acc, cur) => acc += cur.time, 0) / todaysEntries.length;
-            console.log(updateObj);
+            updateObj.averageTime = Math.round(todaysEntries.reduce((acc, cur) => acc += cur.time, 0) / todaysEntries.length);
             updateEntryStatement_mini_data.run(updateObj);
         }
         catch(err){
