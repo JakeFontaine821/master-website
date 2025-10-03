@@ -5,7 +5,7 @@ AddStyle(`
     .leaderboard-entry{
         display: flex;
         align-items: center;
-        width: 300px;
+        width: 350px;
         font-weight: 500;
         gap: 5px;
         padding: 2px 10px;
@@ -50,10 +50,15 @@ export default class leaderboardEntry extends HTMLElement{
             ${place < 1 || place > 3 ? `<div class="place-container">${place}</div>` : ''}
             <div class="name">${entryData.name}</div>
             <div class="name">${formatSecondsToHMS(entryData.time)}</div>
-            <div class="date-scored ${showDate ? '' : 'hidden'}">${parsedDate.toDateString()}</div>
-            ${entryData.revealUsed === 'true' ?
-                `<div class="checks-used ${showDate ? 'hidden' : ''}" title="Reveal Used">${entryData.checksUsed} checks used*</div>` :
-                `<div class="checks-used ${showDate ? 'hidden' : ''}">${entryData.checksUsed} checks used</div>`
+            ${showDate ? 
+                `<div class="date-scored">${parsedDate.toDateString()}</div>`
+                :
+                `
+                    ${entryData.revealUsed === 'true' ?
+                        `<div class="checks-used" title="Reveal Used">${entryData.checksUsed} checks used*</div>` :
+                        `<div class="checks-used">${entryData.checksUsed} checks used</div>`
+                    }
+                `
             }
         `;
     };

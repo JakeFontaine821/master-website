@@ -20,7 +20,6 @@ AddStyle(`
         flex-direction: column;
         align-items; center;
         height: 400px;
-        width: 300px;
         border-right: 2px solid white;
         border-bottom: 2px solid white;
         border-radius: 10px
@@ -151,7 +150,7 @@ export default class MiniLeaderboardPanel extends HTMLElement{
         const alltimeboardInner = this.querySelector('.all-time-board .leaderboard-inner');
         while(alltimeboardInner.firstChild){ alltimeboardInner.firstChild.remove(); }
         for(const [i, entry] of sortedBestTimes.entries()){
-            const newEntry = new leaderboardEntry(entry, i+1);
+            const newEntry = new leaderboardEntry(entry, i+1, true);
             alltimeboardInner.appendChild(newEntry);
         }
 
