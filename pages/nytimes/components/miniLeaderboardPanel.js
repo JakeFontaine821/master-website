@@ -171,7 +171,7 @@ export default class MiniLeaderboardPanel extends HTMLElement{
             hoverLine.style.height = `${distanceFromTop}px`;
 
             const [year, month, day] = date.split("-").map(Number);
-            dateDisplay.innerHTML = new Date(Date.UTC(year, month - 1, day + 1)).toDateString();
+            dateDisplay.innerHTML = `${new Date(Date.UTC(year, month - 1, day + 1)).toDateString()}|`;
             dateDisplay.style.paddingLeft = `${index * 30}px`;
         };
 
