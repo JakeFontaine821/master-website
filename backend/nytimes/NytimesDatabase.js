@@ -28,7 +28,7 @@ db.prepare(`
 // Return all info for the leaderboard from the mini database
 const getTodaysEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE dateString=@dateString`);
 const getLeaderboardEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE topTen='true'`);
-const getAverageTimeStatement = db.prepare(`SELECT averageTime FROM mini_data ORDER BY id DESC LIMIT 30`);
+const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM mini_data ORDER BY id DESC LIMIT 30`);
 function getLeaderboardInfo(){
     const returnObj = {};
     const dateStringObj = { dateString: Utils.getEasternDateString() };
@@ -39,7 +39,7 @@ function getLeaderboardInfo(){
     try{ returnObj.allTime = getLeaderboardEntriesStatement.all(); }
     catch(err){ return { success: false, error: 'Error getting all time entries from database' }; }
 
-    try{ returnObj.averageTimes = getAverageTimeStatement.all().map(entry => entry.averageTime); }
+    try{ returnObj.averageTimes = getAverageTimeStatement.all(); }
     catch(err){ return { success: false, error: 'Error getting average time entry from database' }; }
 
     returnObj.success = true;

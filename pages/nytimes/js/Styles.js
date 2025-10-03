@@ -19,7 +19,11 @@ AddStyle(`
         --accent: #e19b9b;
         --correct: #3333cc;
         --incorrect: #cc3333;
+
         --mini-theme:#8bbcf6;
+        --mini-primary: #d4bf94;
+        --mini-secondary: #7bedcd;
+
         --daily-theme: #9f9f9f;
     }
 
