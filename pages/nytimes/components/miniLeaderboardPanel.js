@@ -70,12 +70,21 @@ AddStyle(`
     }
 
     .mini-leaderboard-panel .date-display{
-        transform: translateX(${-133.06 + 25}px);
         fill: var(--text);
         width: 900px;
         white-space: nowrap;
         display: flex;
         align-items: center;
+        position: relative;
+        height: 30px;
+    }
+
+    .mini-leaderboard-panel .date-display > div{
+        width: 200px;
+        display: flex;
+        align-items center;
+        justify-content: end;
+        position: absolute;
     }
 
     .mini-leaderboard-panel .time-display{
@@ -174,8 +183,13 @@ export default class MiniLeaderboardPanel extends HTMLElement{
             hoverLine.style.height = `${distanceFromTop}px`;
 
             const [year, month, day] = date.split("-").map(Number);
-            dateDisplay.innerHTML = `${new Date(Date.UTC(year, month - 1, day + 1)).toDateString()}<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M440-120v-567l-64 63-56-56 160-160 160 160-56 56-64-63v567h-80Z"/></svg>`;
-            dateDisplay.style.paddingLeft = `${index * 30}px`;
+            dateDisplay.innerHTML = `
+                <div>
+                    ${new Date(Date.UTC(year, month - 1, day + 1)).toDateString()}
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M440-120v-567l-64 63-56-56 160-160 160 160-56 56-64-63v567h-80Z"/></svg>
+                </div>
+            `;
+            dateDisplay.style.left = `${(index * 30) - 175}px`;
         };
 
         for (const [i, timeObj] of timesArray.entries()) {
