@@ -37,19 +37,20 @@ export default class winPopup extends HTMLElement{
                 <div class="close-button"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></div>
                 <div class="header">You Win!</div>
                 <div class="time">00:00</div>
-                <!-- TODO set an input box to put a name for when posting score to the server -->
+                <div><i>Input initials for scoreboard i.e. 'AAA'</i></div>
                 <div class="win-initial-container">
                     <div class="selected"></div>
                     <div></div>
                     <div></div>
                 </div>
-                <div class="submit-score-button">
+                <div class="submit-score-button" disabled>
                     Submit Score
                 </div>
                 <div style="color: #47af55ff" class="saved-text hidden"><i>Saved</i></div>
             </div>
         `;
 
+        this.canInput = true;
         const winInitialContainer = this.querySelector('.win-initial-container');
         const initialContainers = Array.from(winInitialContainer.children);
         let selectedIndex = 0;
@@ -67,13 +68,15 @@ export default class winPopup extends HTMLElement{
         }
 
         // Define player input
+        const submitScoreButton = this.querySelector('.submit-score-button');
         document.addEventListener('keydown', (e) => {
-            if(this.classList.contains('hidden')){ return; }
+            if(this.classList.contains('hidden') || !this.canInput){ return; }
 
             if(/^[a-zA-Z]$/.test(e.key)){
                 const key = e.key.toUpperCase();
                 winInitialContainer.querySelector('.selected').innerHTML = key;
 
+                if(Array.from(winInitialContainer.children).every(element => element.innerHTML)){ submitScoreButton.removeAttribute('disabled'); }
                 if(selectedIndex >= 2){ return; }
 
                 selectedIndex++;
@@ -83,12 +86,14 @@ export default class winPopup extends HTMLElement{
             if(e.key === 'Backspace'){
                 if(winInitialContainer.querySelector('.selected').innerHTML || selectedIndex <= 0){
                     winInitialContainer.querySelector('.selected').innerHTML = '';
+                    if(Array.from(winInitialContainer.children).some(element => !element.innerHTML)){ submitScoreButton.setAttribute('disabled', ''); }
                     return;
                 }
 
                 selectedIndex--;
                 selectInitialContainer(selectedIndex);
                 initialContainers[selectedIndex].innerHTML = '';
+                if(Array.from(winInitialContainer.children).some(element => !element.innerHTML)){ submitScoreButton.setAttribute('disabled', ''); }
                 return;
             }
         });
@@ -97,7 +102,6 @@ export default class winPopup extends HTMLElement{
         this.querySelector('.close-button').addEventListener('click', () => this.classList.add('hidden'));
 
         // send score too server
-        const submitScoreButton = this.querySelector('.submit-score-button');
         submitScoreButton.addEventListener('click', () => {
             submitScoreButton.classList.add('loading');
             if(initialContainers.some(element => !element.innerHTML)){ return; }
@@ -110,8 +114,11 @@ export default class winPopup extends HTMLElement{
     };
 
     showSavedText(){
-        this.querySelector('.submit-score-button').classList.remove('loading');
+        const submitButton = this.querySelector('.submit-score-button');
+        submitButton.classList.remove('loading');
+        submitButton.setAttribute('disabled', '');
         this.querySelector('.saved-text').classList.remove('hidden');
+        this.canInput = false;
     };
 };
 customElements.define('win-popup', winPopup);
