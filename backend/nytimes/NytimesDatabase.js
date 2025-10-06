@@ -79,7 +79,7 @@ async function addTimeEntry(playData){
             // Entries now that are ordered, set the topTen and placing params based on index in the sorted array
             for(const [i, timeEntry] of currentAllTimeBest.entries()){
                 timeEntry.topTen = i < ALLTIME_LEADERBOARD_COUNT ? 'true' : 'false';
-                timeEntry.placing = i+1;
+                timeEntry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000;
 
                 updateEntryStatement_mini.run(timeEntry);
             }
@@ -124,10 +124,28 @@ async function addNewGameBoard(gameBoard){
     return { success: true };
 };
 
+const getSingleEntryFromId = db.prepare(`SELECT * FROM mini_times WHERE id=@id`);
 const deleteTodaysEntryStatement = db.prepare(`DELETE FROM mini_times WHERE id=@id`);
+const getFastestEntries = db.prepare(`SELECT * FROM mini_times ORDER BY time ASC LIMIT ${ALLTIME_LEADERBOARD_COUNT+5}`);
 async function deleteTimeEntry(idObj){
     try{
+        const entryToDelete = getSingleEntryFromId.get(idObj);
+        if(!entryToDelete){ return { success: true }; }
+
         deleteTodaysEntryStatement.run(idObj);
+
+        if(entryToDelete.topTen === 'true'){
+            const allEntriesResponse = getFastestEntries.all();
+            const entires = allEntriesResponse.sort((a, b) => a.time - b.time);
+
+            for(const [i, entry] of entires.entries()){
+                entry.topTen = i < ALLTIME_LEADERBOARD_COUNT ? 'true' : 'false';
+                entry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000;
+
+                updateEntryStatement_mini.run(entry);
+            }
+        }
+
         return { success: true };
     }
     catch(err){ return { success: false, error: 'Error getting entries from \'mini\' database' }; }

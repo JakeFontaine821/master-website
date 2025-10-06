@@ -42,7 +42,10 @@ app.post('/nytimes/mini/times/set', async (req, res) => {
 /**************************************************************************************/
 app.get('/nytimes/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes-dev/index.html')));
 app.get('/nytimes/dev/mini/times', async (req, res) => res.json(await NytimesDatabase.getAllTimeEntries()));
-app.post('/nytimes/dev/mini/times/delete', async (req, res) => res.json(await NytimesDatabase.getAllTimeEntries()));
+app.post('/nytimes/dev/mini/times/delete', async (req, res) => {
+    if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
+    return res.json(await NytimesDatabase.deleteTimeEntry(req.body));
+});
 
 /**************************************************************************************/
 /*                  GLOBAL TIME LOOP                                                  */

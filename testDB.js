@@ -3,39 +3,39 @@ const Database = require('better-sqlite3');
 const db = new Database(path.join(__dirname, '/backend/nytimes/nytDatabase.db'));
 const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 
-// db.prepare(`
-//     CREATE TABLE IF NOT EXISTS mini_times (
-//         id INTEGER PRIMARY KEY AUTOINCREMENT,
-//         name TEXT,
-//         time INTEGER,
-//         dateString TEXT,
-//         checksUsed INTEGER,
-//         revealUsed TEXT,
-//         topTen TEXT,
-//         placing INTEGER
-//     )
-// `).run();
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS mini_times (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        time INTEGER,
+        dateString TEXT,
+        checksUsed INTEGER,
+        revealUsed TEXT,
+        topTen TEXT,
+        placing INTEGER
+    )
+`).run();
 
-// db.prepare(`
-//     CREATE TABLE IF NOT EXISTS mini_data (
-//         id INTEGER PRIMARY KEY AUTOINCREMENT,
-//         gameBoard TEXT,
-//         dateString TEXT,
-//         averageTime REAL
-//     )
-// `).run();
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS mini_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gameBoard TEXT,
+        dateString TEXT,
+        averageTime REAL
+    )
+`).run();
 
 const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
 const time = Math.floor(Math.random() * 120)
-for (let i = 1; i <= 25; i++) {
+for (let i = 1; i <= 85; i++) {
     const entry = {
         name: 'AAA',
         time: time + i,
         dateString: Utils.getEasternDateString(),
         checksUsed: 2,
         revealUsed: 'true',
-        topTen: 'true',
-        placing: i
+        topTen: i <= 10 ? 'true' : 'false',
+        placing: i <= 10 ? i : 10000
     }
 
     addEntryStatement_mini.run(entry);
