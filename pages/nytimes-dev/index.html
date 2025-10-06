@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Games -DevPage</title>
+
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        .landing-page{
+            width: 100vw;
+            height: 100vh;
+            background-color: white;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .proceed-button{
+            padding: 10px 15px;
+            background-color: red;
+            cursor: pointer;
+            border: 1px solid black;
+            border-radius: 25px;
+        }
+
+        .entry{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+        }
+
+        .entry:hover{
+            border: 1px solid black;
+        }
+
+        .delete-button{
+            cursor: pointer;
+        }
+
+        .hidden{
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-page">
+        <div>Warning: This is a developer page, while I will not stop you from accessing,</div>
+        <div>know that using this page will ruin the immersion and spirit of competition, please think twice</div>
+        <div class="proceed-button">Proceed.</div>
+    </div>
+    <div class="not-landing-page"></div>
+
+    <script>
+        // landing page
+        const landingPage = document.querySelector('.landing-page');
+        const proceedButton = document.querySelector('.proceed-button');
+        proceedButton.addEventListener('click', () => landingPage.classList.add('hidden'));
+
+        // Actually apge stuff
+        const reloadPage = async () => {
+            const page = document.querySelector('.not-landing-page');
+            while(page.firstChild){ page.firstChild.remove(); }
+
+            const response = await fetch('/nytimes/dev/mini/times');
+            const data = await response.json();
+
+            for(const entry of data.entries){
+                const newEntry = document.createElement('div');
+                newEntry.classList.add('entry');
+
+                for(const [key, value] of Object.entries(entry)){
+                    const newKey = document.createElement('div');
+                    newKey.innerHTML = `${key}: ${value},`;
+
+                    newEntry.appendChild(newKey);
+                }
+
+                // add delete button
+                const deleteButton = document.createElement('div');
+                deleteButton.classList.add('delete-button');
+                deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>';
+                newEntry.appendChild(deleteButton);
+                deleteButton.addEventListener('click', async () => {
+                    if(!confirm(`Are you sure you want to delete entry:\n${newEntry.innerText}?`)){ return; };
+
+                    const response = await fetch('/nytimes/dev/mini/times/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: entry.id })
+                    });
+                    const data = await response.json();
+
+                    if(data.success){ reloadPage(); }
+                });
+
+                page.appendChild(newEntry);
+            }
+        };
+        reloadPage();
+    </script>
+</body>
+</html>
