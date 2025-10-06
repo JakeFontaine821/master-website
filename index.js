@@ -38,6 +38,13 @@ app.post('/nytimes/mini/times/set', async (req, res) => {
 });
 
 /**************************************************************************************/
+/*                  NYTIMES DEV PAGE                                                  */
+/**************************************************************************************/
+app.get('/nytimes/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes-dev/index.html')));
+app.get('/nytimes/dev/mini/times', async (req, res) => res.json(await NytimesDatabase.getAllTimeEntries()));
+app.post('/nytimes/dev/mini/times/delete', async (req, res) => res.json(await NytimesDatabase.getAllTimeEntries()));
+
+/**************************************************************************************/
 /*                  GLOBAL TIME LOOP                                                  */
 /**************************************************************************************/
 const SECOND_INTERVAL = setInterval(() => {

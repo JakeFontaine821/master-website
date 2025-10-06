@@ -25,12 +25,21 @@ db.prepare(`
     )
 `).run();
 
+// DEV FUNCTION to return ALL time entries
+const getEntriesStatement = db.prepare(`SELECT * FROM mini_times`);
+function getAllTimeEntries(){
+    const returnObj = { success: true };
+    try{ returnObj.entries = getEntriesStatement.all(); }
+    catch(err){ return { success: false, error: 'Error getting entries from database' }; }
+    return returnObj;
+};
+
 // Return all info for the leaderboard from the mini database
 const getTodaysEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE dateString=@dateString`);
 const getLeaderboardEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE topTen='true'`);
 const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM mini_data ORDER BY id DESC LIMIT 30`);
 function getLeaderboardInfo(){
-    const returnObj = {};
+    const returnObj = { success: true };
     const dateStringObj = { dateString: Utils.getEasternDateString() };
 
     try{ returnObj.today = getTodaysEntriesStatement.all(dateStringObj); }
@@ -42,7 +51,6 @@ function getLeaderboardInfo(){
     try{ returnObj.averageTimes = getAverageTimeStatement.all(); }
     catch(err){ return { success: false, error: 'Error getting average time entry from database' }; }
 
-    returnObj.success = true;
     return returnObj;
 };
 
@@ -117,14 +125,18 @@ async function addNewGameBoard(gameBoard){
 };
 
 const deleteTodaysEntryStatement = db.prepare(`DELETE FROM mini_times WHERE id=@id`);
-async function deleteTodaysEntry(entryObj){
-    try{ return { success: true, data: deleteTodaysEntryStatement.run(entryObj) }; }
+async function deleteTimeEntry(idObj){
+    try{
+        deleteTodaysEntryStatement.run(idObj);
+        return { success: true };
+    }
     catch(err){ return { success: false, error: 'Error getting entries from \'mini\' database' }; }
 };
 
 module.exports = {
+    getAllTimeEntries,
     getLeaderboardInfo,
     addTimeEntry,
     addNewGameBoard,
-    deleteTodaysEntry,
+    deleteTimeEntry,
 };
