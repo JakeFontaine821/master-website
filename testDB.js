@@ -26,17 +26,17 @@
 // `).run();
 
 // const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
-// const time = Math.floor(Math.random() * 120)
+// const time = Math.floor(Math.random() * 120);
 // for (let i = 1; i <= 85; i++) {
 //     const entry = {
-//         name: 'AAA',
+//         name: Array.from(new Array(3), a => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]).join(''),
 //         time: time + i,
-//         dateString: Utils.getEasternDateString(),
-//         checksUsed: 2,
-//         revealUsed: 'true',
+//         dateString: new Date(Date.now() - (Math.floor(Math.random() * 7) * 86400000)).toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
+//         checksUsed: Math.floor(Math.random() * 20),
+//         revealUsed: 'false',
 //         topTen: i <= 10 ? 'true' : 'false',
 //         placing: i <= 10 ? i : 10000
-//     }
+//     };
 
 //     addEntryStatement_mini.run(entry);
 // }
