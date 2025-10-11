@@ -8,7 +8,7 @@ const Utils = require(path.join(__dirname, './backend/Utils.js'));
 /**************************************************************************************/
 /*                  LANDING SITE                                                      */
 /**************************************************************************************/
-app.get('/', (req, res) => res.json({ success: true }));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/index.html')));
 
 /**************************************************************************************/
 /*                  NYTIMES GAMES                                                     */

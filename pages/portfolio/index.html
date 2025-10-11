@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/pages/favicon.png">
+    <title>Portfolio</title>
+
+    <script type="module" src="/pages/portfolio/components/navPanel.js"></script>
+    <script type="module" src="/pages/portfolio/components/landingPage.js"></script>
+    <script type="module" src="/pages/portfolio/components/projectsPage.js"></script>
+    <script type="module" src="/pages/portfolio/components/aboutPage.js"></script>
+    <script type="module" src="/pages/portfolio/components/resumePage.js"></script>
+</head>
+<body>
+    <nav-panel></nav-panel>
+    <landing-page></landing-page>
+    <projects-page></projects-page>
+    <about-page></about-page>
+    <resume-page></resume-page>
+
+    <script>
+        const body = document.querySelector('body');
+        const pages = {
+            'home':     document.querySelector('landing-page'),
+            'projects': document.querySelector('projects-page'),
+            'about':    document.querySelector('about-page'),
+            'resume':   document.querySelector('resume-page'),
+        };
+        const navPanel = document.querySelector('nav-panel');
+        navPanel.addEventListener('switchpage', ({page}) => {
+            for(const page of Object.values(pages)){ page.classList.add('hidden'); }
+            pages[page].classList.remove('hidden');
+        });
+
+        // setTimeout(() => body.classList.add('a'), 1000);
+    </script>
+</body>
+</html>
