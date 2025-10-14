@@ -51,7 +51,7 @@ AddStyle(`
 
     .mini-page .game-section .current-clue{
         padding: 10px 25px;
-        width: 100%;
+        width: 600px;
         height: 50px;
         display: flex;
         align-items: center;
@@ -59,7 +59,6 @@ AddStyle(`
     }
 
     .mini-page .game-section .grid-container{
-        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: start;
