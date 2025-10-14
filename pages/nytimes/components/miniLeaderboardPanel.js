@@ -192,6 +192,7 @@ export default class MiniLeaderboardPanel extends HTMLElement{
             dateDisplay.style.left = `${(index * 30) - 175}px`;
         };
 
+        while(barGraph.firstChild){ barGraph.firstChild.remove(); }
         for (const [i, timeObj] of timesArray.entries()) {
             const newBar = new AverageTimeBar(timeObj, maxTime);
 
