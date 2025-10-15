@@ -35,6 +35,11 @@ AddStyle(`
         box-sizing: border-box;
     }
 
+    .pages-container{
+        transform: translateY(0vh);
+        transition: transform 2s;
+    }
+
     .landing-page, .projects-page, .about-page, .resume-page{
         width: 100vw;
         height: 100vh;

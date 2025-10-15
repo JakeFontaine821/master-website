@@ -14,26 +14,25 @@
 </head>
 <body>
     <nav-panel></nav-panel>
-    <landing-page></landing-page>
-    <projects-page></projects-page>
-    <about-page></about-page>
-    <resume-page></resume-page>
+    <div class="pages-container">
+        <landing-page></landing-page>
+        <projects-page></projects-page>
+        <about-page></about-page>
+        <resume-page></resume-page>
+    </div>
 
     <script>
         const body = document.querySelector('body');
         const pages = {
-            'home':     document.querySelector('landing-page'),
-            'projects': document.querySelector('projects-page'),
-            'about':    document.querySelector('about-page'),
-            'resume':   document.querySelector('resume-page'),
+            'home':     { element: document.querySelector('landing-page'), offset: '0vh' },
+            'projects': { element: document.querySelector('projects-page'), offset: '-100vh'},
+            'about':    { element: document.querySelector('about-page'), offset: '-200vh'},
+            'resume':   { element: document.querySelector('resume-page'), offset: '-300vh'},
         };
-        const navPanel = document.querySelector('nav-panel');
-        navPanel.addEventListener('switchpage', ({page}) => {
-            for(const page of Object.values(pages)){ page.classList.add('hidden'); }
-            pages[page].classList.remove('hidden');
-        });
 
-        // setTimeout(() => body.classList.add('a'), 1000);
+        const pagesContainer = document.querySelector('.pages-container');
+        const navPanel = document.querySelector('nav-panel');
+        navPanel.addEventListener('switchpage', ({page}) => pagesContainer.style.transform = `translateY(${pages[page].offset})`);
     </script>
 </body>
 </html>
