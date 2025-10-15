@@ -11,12 +11,13 @@ AddStyle(`
 
     .projects-page .slideshow-container{
         flex: 1;
-        overflow: auto;
+        width: 100vw;
     }
 
     .projects-page .slideshow-container-inner{
         transform: translateX(0vw);
-        transition: transform 2s;
+        transition: transform .4s;
+        display: flex;
     }
 
     .projects-page .project-panel{
@@ -28,8 +29,8 @@ AddStyle(`
         display: flex;
         align-items: center;
         justify-content: end;
-        font-size: 44px;
-        padding: 25px;
+        font-size: 50px;
+        padding: 25px 22px 18px 0px;
         border-bottom: 1px solid var(--accent);
     }
 
@@ -47,6 +48,16 @@ AddStyle(`
     .projects-page .project-nav-panel > div{
         cursor: pointer;
         user-select: none;
+        border-top: 1px solid transparent;
+    }
+
+    .projects-page .project-nav-panel > div:hover{
+        border-top: 0px solid transparent;
+        border-bottom: 1px solid var(--text);
+    }
+
+    .projects-page .project-nav-panel > div.selected{
+        color: var(--hover-text);
     }
 `);
 
@@ -75,7 +86,8 @@ export default class ProjectsPage extends HTMLElement{
         `;
 
         const slideshowContainer = this.querySelector('.slideshow-container-inner');
-        for(const config of Projects){
+        for(const [projectIndex, config] of Projects.entries()){
+            /************************ Setup the project panel ************************/
             const newProjectPanel = document.createElement('div');
             newProjectPanel.classList.add('project-panel');
             newProjectPanel.innerHTML = templateProjectPanel;
@@ -96,10 +108,20 @@ export default class ProjectsPage extends HTMLElement{
             // Append the panel to the slideshow
             slideshowContainer.appendChild(newProjectPanel);
 
-            // setup project nav button
+            /************************ Setup the project nav button ************************/
+            const projectNavPanel = document.querySelector('.project-nav-panel');
             const newProjectNavButton = document.createElement('div');
             newProjectNavButton.innerHTML = config.name;
-            document.querySelector('.project-nav-panel').appendChild(newProjectNavButton);
+            if(!projectIndex){ newProjectNavButton.classList.add('selected'); }
+
+            newProjectNavButton.addEventListener('click', () => {
+                for(const projectNavButton of projectNavPanel.children){ projectNavButton.classList.remove('selected'); }
+                newProjectNavButton.classList.add('selected');
+                
+                slideshowContainer.style.transform = `translateX(-${projectIndex * 100}vw)`;
+            })
+
+            projectNavPanel.appendChild(newProjectNavButton);
         }
     };
 };

@@ -37,7 +37,7 @@ AddStyle(`
 
     .pages-container{
         transform: translateY(0vh);
-        transition: transform 2s;
+        transition: transform .4s;
     }
 
     .landing-page, .projects-page, .about-page, .resume-page{
@@ -47,7 +47,6 @@ AddStyle(`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
         position: relative;
     }
 
