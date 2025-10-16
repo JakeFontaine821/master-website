@@ -18,10 +18,13 @@ AddStyle(`
         transform: translateX(0vw);
         transition: transform .4s;
         display: flex;
+        height: 100%;
     }
 
     .projects-page .project-panel{
         width: 100vw;
+        display: flex;
+        flex-direction: column;
     }
 
     .projects-page .project-panel .header-row{
@@ -30,8 +33,37 @@ AddStyle(`
         align-items: center;
         justify-content: end;
         font-size: 50px;
-        padding: 25px 22px 18px 0px;
+        padding: 25px 22px 17px 0px;
         border-bottom: 1px solid var(--accent);
+        border-radius: 10px;
+    }
+
+    .projects-page .project-panel .content-section{
+        display: flex;
+        flex: 1;
+    }
+
+    .projects-page .project-panel .info-column{
+        flex: 3;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .projects-page .project-panel .info-column > div{
+        flex: 1;
+        border: 1px solid var(--accent);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        line-height: 175%;
+        padding: 0px 10px;
+    }
+
+    .projects-page .project-panel .picture-section{
+        flex: 7;
     }
 
     .projects-page .project-nav-panel{
