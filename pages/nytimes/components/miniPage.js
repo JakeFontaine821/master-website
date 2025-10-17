@@ -372,7 +372,6 @@ export default class MiniPage extends HTMLElement{
             // Define player input
             document.addEventListener('keydown', (e) => {
                 if(this.classList.contains('hidden') || !this.playing){ return; }
-                e.preventDefault();
 
                 // Player input for selected square
                 if(/^[a-zA-Z]$/.test(e.key)){
@@ -383,12 +382,14 @@ export default class MiniPage extends HTMLElement{
                 // Remove the value from the current selected cell and move one square back in the selected word
                 if(e.key === 'Backspace'){
                     this.querySelector('grid-cell.selected').clear(true);
+                    e.preventDefault();
                     return;
                 }
 
                 // Switch the direction and set the new selected clue
                 if(e.key === 'Tab'){
                     switchDirection();
+                    e.preventDefault();
                     return;
                 }
 
@@ -399,6 +400,8 @@ export default class MiniPage extends HTMLElement{
 
                     direction = newClueElement.direction;
                     selectClue(newClueElement);
+
+                    e.preventDefault();
                     return;
                 }
 
@@ -434,6 +437,9 @@ export default class MiniPage extends HTMLElement{
                     // Set new cell
                     this.cellArray[desiredCellIndex].classList.add('selected');
                     selectClue(this.clueElements[this.cellArray[desiredCellIndex].clues[direction]], true);
+                    
+                    e.preventDefault();
+                    return;
                 };
 
                 // Arrow keys navigate the board, all that changes between them is math
@@ -484,6 +490,8 @@ export default class MiniPage extends HTMLElement{
             winPopup.addEventListener('submit', async ({name}) => {
                 try{
                     this.saveObject['name'] = name;
+                    this.saveObject['time'] = parseFloat((this.playTime + (this.elapsedMilliseconds / 1000)).toFixed(4));
+
                     const saveResponse = await fetch('/nytimes/mini/times/set', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -518,8 +526,6 @@ export default class MiniPage extends HTMLElement{
             if(this.elapsedMilliseconds >= 1000){
                 this.playTime += Math.floor(this.elapsedMilliseconds / 1000);
                 this.elapsedMilliseconds = this.elapsedMilliseconds % 1000;
-
-                this.saveObject['time'] = this.playTime;
 
                 // Update UI
                 this.querySelector('.timer-display').innerHTML = formatSecondsToHMS(this.playTime);
