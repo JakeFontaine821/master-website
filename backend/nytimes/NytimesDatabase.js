@@ -79,7 +79,7 @@ async function addTimeEntry(playData){
             // Entries now that are ordered, set the topTen and placing params based on index in the sorted array
             for(const [i, timeEntry] of currentAllTimeBest.entries()){
                 timeEntry.topTen = i < ALLTIME_LEADERBOARD_COUNT ? 'true' : 'false';
-                timeEntry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000;
+                timeEntry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000000;
 
                 updateEntryStatement_mini.run(timeEntry);
             }

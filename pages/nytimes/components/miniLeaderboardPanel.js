@@ -147,7 +147,6 @@ export default class MiniLeaderboardPanel extends HTMLElement{
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
-        console.log(minileaderboardInfo)
 
         // Sort the entries for the day list
         const sortedTodayTimes = minileaderboardInfo.today.sort((a, b) => a.time - b.time);

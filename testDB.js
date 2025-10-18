@@ -1,13 +1,44 @@
-// const path = require('path');
-// const Database = require('better-sqlite3');
-// const db = new Database(path.join(__dirname, '/backend/nytimes/nytDatabase.db'));
-// const Utils = require(path.join(__dirname, '/backend/Utils.js'));
+const path = require('path');
+const Database = require('better-sqlite3');
+const db = new Database(path.join(__dirname, '/backend/nytimes/nytDatabase.db'));
+const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 
+/*******************************************************************************************/
+/*                                  USED TO CONVERT TABLE ENTRIES OR COLUMN DATA TYPE      */
+/*******************************************************************************************/
+const allEntries = db.prepare('SELECT * from mini_times').all();
+console.log('Got all Entries');
+
+db.prepare('DROP TABLE mini_times').run();
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS mini_times (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        time REAL,
+        dateString TEXT,
+        checksUsed INTEGER,
+        revealUsed TEXT,
+        topTen TEXT,
+        placing INTEGER
+    )
+`).run();
+
+const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
+for(const [i, entry] of allEntries.entries()){
+    if(entry.topTen === 'false'){ entry.placing = 10000000; }
+    addEntryStatement_mini.run(entry);
+}
+console.log('added entries to table copy');
+
+/*******************************************************************************************/
+/*                                  USED TO cREATE AND FILL TABLES WITH DUMMIE DATA        */
+/*******************************************************************************************/
 // db.prepare(`
 //     CREATE TABLE IF NOT EXISTS mini_times (
 //         id INTEGER PRIMARY KEY AUTOINCREMENT,
 //         name TEXT,
-//         time INTEGER,
+//         time REAL,
 //         dateString TEXT,
 //         checksUsed INTEGER,
 //         revealUsed TEXT,
@@ -27,7 +58,7 @@
 
 // const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
 // const time = Math.floor(Math.random() * 120);
-// for (let i = 1; i <= 85; i++) {
+// for (let i = 1; i <= 30; i++) {
 //     const entry = {
 //         name: Array.from(new Array(3), a => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]).join(''),
 //         time: time + i,
