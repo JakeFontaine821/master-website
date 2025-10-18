@@ -14,7 +14,8 @@ app.get('/', (req, res) => res.json({ success: true }));
 /*                  NYTIMES GAMES                                                     */
 /**************************************************************************************/
 const Nytimes = require(path.join(__dirname, './backend/nytimes/Nytimes.js'));
-const NytimesDatabase = require(path.join(__dirname, './backend/nytimes/NytimesDatabase.js'));
+const NytimesDatabase_Mini = require(path.join(__dirname, './backend/nytimes/NytimesDatabase_Mini.js'));
+const NytimesDatabase_Daily = require(path.join(__dirname, './backend/nytimes/NytimesDatabase_Daily.js'));
 
 // Serve the webpage
 app.get('/nytimes', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes/index.html')));
@@ -26,7 +27,7 @@ app.get('/nytimes/connections', (req, res) => res.json(Nytimes.gameBoards.get('c
 app.get('/nytimes/letterBoxed', (req, res) => res.json(Nytimes.gameBoards.get('letterBoxed')));
 
 // ------------------------ MINI SPECFIC ------------------------
-app.get('/nytimes/mini/times/get', async (req, res) => res.json(await NytimesDatabase.getLeaderboardInfo()));
+app.get('/nytimes/mini/times/get', async (req, res) => res.json(await NytimesDatabase_Mini.getLeaderboardInfo()));
 app.post('/nytimes/mini/times/set', async (req, res) => {
     if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
     if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
@@ -34,17 +35,29 @@ app.post('/nytimes/mini/times/set', async (req, res) => {
     if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
     if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
 
-    res.json(await NytimesDatabase.addTimeEntry(req.body));
+    res.json(await NytimesDatabase_Mini.addTimeEntry(req.body));
+});
+
+// ------------------------ DAILY SPECFIC ------------------------
+app.get('/nytimes/daily/times/get', async (req, res) => res.json(await NytimesDatabase_Daily.getLeaderboardInfo()));
+app.post('/nytimes/daily/times/set', async (req, res) => {
+    if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
+    if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
+    if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
+    if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
+    if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
+
+    res.json(await NytimesDatabase_Daily.addTimeEntry(req.body));
 });
 
 /**************************************************************************************/
 /*                  NYTIMES DEV PAGE                                                  */
 /**************************************************************************************/
 app.get('/nytimes/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes-dev/index.html')));
-app.get('/nytimes/dev/mini/times', async (req, res) => res.json(await NytimesDatabase.getAllTimeEntries()));
+app.get('/nytimes/dev/mini/times', async (req, res) => res.json(await NytimesDatabase_Mini.getAllTimeEntries()));
 app.post('/nytimes/dev/mini/times/delete', async (req, res) => {
     if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
-    return res.json(await NytimesDatabase.deleteTimeEntry(req.body));
+    return res.json(await NytimesDatabase_Mini.deleteTimeEntry(req.body));
 });
 
 /**************************************************************************************/

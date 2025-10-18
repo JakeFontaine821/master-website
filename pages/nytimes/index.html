@@ -67,6 +67,7 @@
 
     <script type="module" src="/pages/nytimes/components/landingPage.js"></script>
     <script type="module" src="/pages/nytimes/components/miniPage.js"></script>
+    <script type="module" src="/pages/nytimes/components/dailyPage.js"></script>
 </head>
 <body>
     <landing-page></landing-page>
@@ -91,6 +92,7 @@
 
         const dailyPage = document.querySelector('daily-page');
         dailyPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="daily"]').removeAttribute('disabled'));
+        dailyPage.addEventListener('reload-leaderboards', () => landingPage.reloadLeaderboards(['daily']));
 
         // Set up the nav buttons
         const navSelectionHighlighter = document.querySelector('.nav-panel .selection-highlight');
