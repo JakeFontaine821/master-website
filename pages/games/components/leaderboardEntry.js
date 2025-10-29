@@ -80,7 +80,7 @@ export default class leaderboardEntry extends HTMLElement{
             const checksDisplay = document.createElement('div');
             checksDisplay.classList.add('checks-used', 'right');
             checksDisplay.innerHTML = `${entryData.checksUsed} checks used`;
-            if(entryData.revealUsed){
+            if(entryData.revealUsed === 'true'){
                 checksDisplay.setAttribute('title', 'Reveal Used');
                 checksDisplay.innerHTML += '*';
             }
