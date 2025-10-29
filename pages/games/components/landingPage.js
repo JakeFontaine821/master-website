@@ -2,6 +2,7 @@ import AddStyle from '../js/Styles.js';
 
 import './miniLeaderboardPanel.js';
 import './dailyLeaderboardPanel.js';
+import './mazeLeaderboardPanel.js';
 
 AddStyle(`
     .landing-page .header-row{
@@ -59,10 +60,12 @@ export default class landingPage extends HTMLElement{
                     <div class="tab-row">
                         <div panel="mini-leaderboard-panel" style="background-color: var(--mini-theme);">MINI</div>
                         <div panel="daily-leaderboard-panel" style="background-color: var(--daily-theme);">DAILY</div>
+                        <div panel="maze-leaderboard-panel" style="background-color: var(--maze-theme);">MAZE</div>
                     </div>
                     <div class="panel-container">
                         <mini-leaderboard-panel></mini-leaderboard-panel>
                         <daily-leaderboard-panel></daily-leaderboard-panel>
+                        <maze-leaderboard-panel></maze-leaderboard-panel>
                     </div>
                 </div>
             </div>
@@ -83,6 +86,7 @@ export default class landingPage extends HTMLElement{
     async reloadLeaderboards(games=[]){
         if(games.includes('all') || games.includes('mini')){ this.querySelector('.mini-leaderboard-panel').loadPage(); }
         if(games.includes('all') || games.includes('daily')){ this.querySelector('.daily-leaderboard-panel').loadPage(); }
+        if(games.includes('all') || games.includes('maze')){ this.querySelector('.maze-leaderboard-panel').loadPage(); }
         // if(){} other games
     };
 

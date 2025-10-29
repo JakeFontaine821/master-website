@@ -70,7 +70,7 @@
             const page = document.querySelector('.not-landing-page');
             while(page.firstChild){ page.firstChild.remove(); }
 
-            const response = await fetch('/nytimes/dev/mini/times');
+            const response = await fetch('/games/dev/mini/times');
             const data = await response.json();
 
             for(const entry of data.entries){
@@ -92,7 +92,7 @@
                 deleteButton.addEventListener('click', async () => {
                     if(!confirm(`Are you sure you want to delete entry:\n${newEntry.innerText}?`)){ return; };
 
-                    const response = await fetch('/nytimes/dev/mini/times/delete', {
+                    const response = await fetch('/games/dev/mini/times/delete', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: entry.id })

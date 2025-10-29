@@ -25,6 +25,7 @@ AddStyle(`
         --mini-secondary: #7bedcd;
 
         --daily-theme: #9f9f9f;
+        --maze-theme: #B5A5D5;
     }
 
     body{

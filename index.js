@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const app = express();
 app.use(express.json());
-app.use('/pages', express.static(path.join(__dirname, 'pages')));
+app.use('/', express.static(path.join(__dirname, 'pages')));
 const Utils = require(path.join(__dirname, './backend/Utils.js'));
 
 /**************************************************************************************/
@@ -11,53 +11,65 @@ const Utils = require(path.join(__dirname, './backend/Utils.js'));
 app.get('/', (req, res) => res.json({ success: true }));
 
 /**************************************************************************************/
-/*                  NYTIMES GAMES                                                     */
+/*                          GAMES                                                     */
 /**************************************************************************************/
-const Nytimes = require(path.join(__dirname, './backend/nytimes/Nytimes.js'));
-const NytimesDatabase_Mini = require(path.join(__dirname, './backend/nytimes/NytimesDatabase_Mini.js'));
-const NytimesDatabase_Daily = require(path.join(__dirname, './backend/nytimes/NytimesDatabase_Daily.js'));
+const Games = require(path.join(__dirname, './backend/games/Games.js'));
+const GamesDatabase_Mini = require(path.join(__dirname, './backend/games/GamesDatabase_Mini.js'));
+const GamesDatabase_Daily = require(path.join(__dirname, './backend/games/GamesDatabase_Daily.js'));
+const GamesDatabase_Maze = require(path.join(__dirname, './backend/games/GamesDatabase_Maze.js'));
 
 // Serve the webpage
-app.get('/nytimes', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes/index.html')));
+app.get('/games', (req, res) => res.sendFile(path.join(__dirname, '/games/index.html')));
 
 // Get the game's data
-app.get('/nytimes/mini', (req, res) => res.json(Nytimes.gameBoards.get('miniCrossword')));
-app.get('/nytimes/daily', (req, res) => res.json(Nytimes.gameBoards.get('daily')));
-app.get('/nytimes/connections', (req, res) => res.json(Nytimes.gameBoards.get('connections')));
-app.get('/nytimes/letterBoxed', (req, res) => res.json(Nytimes.gameBoards.get('letterBoxed')));
+app.get('/games/mini', (req, res) => res.json(Games.gameBoards.get('miniCrossword')));
+app.get('/games/daily', (req, res) => res.json(Games.gameBoards.get('daily')));
+app.get('/games/connections', (req, res) => res.json(Games.gameBoards.get('connections')));
+app.get('/games/letterBoxed', (req, res) => res.json(Games.gameBoards.get('letterBoxed')));
+app.get('/games/maze', (req, res) => res.json(Games.gameBoards.get('maze')));
 
 // ------------------------ MINI SPECFIC ------------------------
-app.get('/nytimes/mini/times/get', async (req, res) => res.json(await NytimesDatabase_Mini.getLeaderboardInfo()));
-app.post('/nytimes/mini/times/set', async (req, res) => {
+app.get('/games/mini/times/get', async (req, res) => res.json(await GamesDatabase_Mini.getLeaderboardInfo()));
+app.post('/games/mini/times/set', async (req, res) => {
     if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
     if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
     if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
     if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
     if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
 
-    res.json(await NytimesDatabase_Mini.addTimeEntry(req.body));
+    res.json(await GamesDatabase_Mini.addTimeEntry(req.body));
 });
 
 // ------------------------ DAILY SPECFIC ------------------------
-app.get('/nytimes/daily/times/get', async (req, res) => res.json(await NytimesDatabase_Daily.getLeaderboardInfo()));
-app.post('/nytimes/daily/times/set', async (req, res) => {
+app.get('/games/daily/times/get', async (req, res) => res.json(await GamesDatabase_Daily.getLeaderboardInfo()));
+app.post('/games/daily/times/set', async (req, res) => {
     if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
     if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
     if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
     if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
     if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
 
-    res.json(await NytimesDatabase_Daily.addTimeEntry(req.body));
+    res.json(await GamesDatabase_Daily.addTimeEntry(req.body));
+});
+
+// ------------------------ MAZE SPECFIC ------------------------
+app.get('/games/maze/times/get', async (req, res) => res.json(await GamesDatabase_Maze.getLeaderboardInfo()));
+app.post('/games/maze/times/set', async (req, res) => {
+    if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
+    if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
+    if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
+
+    res.json(await GamesDatabase_Maze.addTimeEntry(req.body));
 });
 
 /**************************************************************************************/
-/*                  NYTIMES DEV PAGE                                                  */
+/*                    GAMES DEV PAGE                                                  */
 /**************************************************************************************/
-app.get('/nytimes/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/nytimes-dev/index.html')));
-app.get('/nytimes/dev/mini/times', async (req, res) => res.json(await NytimesDatabase_Mini.getAllTimeEntries()));
-app.post('/nytimes/dev/mini/times/delete', async (req, res) => {
+app.get('/games/dev', (req, res) => res.sendFile(path.join(__dirname, '/games-dev/index.html')));
+app.get('/games/dev/mini/times', async (req, res) => res.json(await GamesDatabase_Mini.getAllTimeEntries()));
+app.post('/games/dev/mini/times/delete', async (req, res) => {
     if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
-    return res.json(await NytimesDatabase_Mini.deleteTimeEntry(req.body));
+    return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body));
 });
 
 /**************************************************************************************/
@@ -88,7 +100,7 @@ function GLOBAL_TIME_LOOP(){
 
     switch(currentEstTime){
         case 0: // 12:00:30 AM
-            Nytimes.updateNytimesGames();
+            Games.updateGames();
             break;
         case 1: // 1:00:30 AM
             break;

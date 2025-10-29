@@ -4,18 +4,18 @@ import AverageTimeBar from './averageTimeBar.js';
 import { formatSecondsToHMS } from '../js/utils.js';
 
 AddStyle(`
-    .daily-leaderboard-panel{
-        background-color: var(--daily-theme);
+    .maze-leaderboard-panel{
+        background-color: var(--maze-theme);
     }
 
-    .daily-leaderboard-panel .leaderboard-row{
+    .maze-leaderboard-panel .leaderboard-row{
         display: flex;
         justify-content: center;
         padding: 20px 0px;
         gap: 10px;
     }
 
-    .daily-leaderboard-panel .leaderboard-row > div{
+    .maze-leaderboard-panel .leaderboard-row > div{
         display: flex;
         flex-direction: column;
         align-items; center;
@@ -25,43 +25,43 @@ AddStyle(`
         border-radius: 10px
     }
 
-    .daily-leaderboard-panel .leaderboard-row div b{
+    .maze-leaderboard-panel .leaderboard-row div b{
         display: flex;
         justify-content: center;
     }
 
-    .daily-leaderboard-panel .leaderboard-outer{
+    .maze-leaderboard-panel .leaderboard-outer{
         overflow-x: hidden;
         overflow-y: auto;
     }
 
-    .daily-leaderboard-panel .avg-time-row{
+    .maze-leaderboard-panel .avg-time-row{
         display: flex;
         justify-content: center;
     }
 
-    .daily-leaderboard-panel .avg-time-row > div{
+    .maze-leaderboard-panel .avg-time-row > div{
         display: flex;
         flex-direction: column;
     }
 
-    .daily-leaderboard-panel .avg-time-row .flex-row{
+    .maze-leaderboard-panel .avg-time-row .flex-row{
         display: flex;
     }
 
-    .daily-leaderboard-panel .avg-time-display{
+    .maze-leaderboard-panel .avg-time-display{
         display: flex;
     }
 
-    .daily-leaderboard-panel .left-side{
+    .maze-leaderboard-panel .left-side{
         position: relative;
     }
 
-    .daily-leaderboard-panel .bar-graph{
+    .maze-leaderboard-panel .bar-graph{
         display: flex;
     }
 
-    .daily-leaderboard-panel .hover-line{
+    .maze-leaderboard-panel .hover-line{
         position: absolute;
         top: 0px;
         width: 900px;
@@ -69,7 +69,7 @@ AddStyle(`
         pointer-events: none;
     }
 
-    .daily-leaderboard-panel .date-display{
+    .maze-leaderboard-panel .date-display{
         fill: var(--text);
         width: 900px;
         white-space: nowrap;
@@ -79,7 +79,7 @@ AddStyle(`
         height: 30px;
     }
 
-    .daily-leaderboard-panel .date-display > div{
+    .maze-leaderboard-panel .date-display > div{
         width: 200px;
         display: flex;
         align-items center;
@@ -87,16 +87,16 @@ AddStyle(`
         position: absolute;
     }
 
-    .daily-leaderboard-panel .time-display{
+    .maze-leaderboard-panel .time-display{
         transform: translateY(-12px);
     }
 `);
 
-export default class DailyLeaderboardPanel extends HTMLElement{
+export default class MazeLeaderboardPanel extends HTMLElement{
     constructor(){
         super();
 
-        this.classList.add('daily-leaderboard-panel', 'hidden');
+        this.classList.add('maze-leaderboard-panel', 'hidden');
 
         this.innerHTML = `
             <div class="leaderboard-row">
@@ -133,24 +133,23 @@ export default class DailyLeaderboardPanel extends HTMLElement{
     };
 
     async loadPage(){
-        let dailyleaderboardInfo;
-        while (!dailyleaderboardInfo?.success) {
+        let mazeleaderboardInfo;
+        while (!mazeleaderboardInfo?.success) {
             try{
-                const response = await fetch('/nytimes/daily/times/get');
+                const response = await fetch('/games/maze/times/get');
                 if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
-                dailyleaderboardInfo = await response.json();
-                if(!dailyleaderboardInfo.success){ throw new Error(`Failed fetching from server: ${dailyleaderboardInfo.error}`); }
+                mazeleaderboardInfo = await response.json();
+                if(!mazeleaderboardInfo.success){ throw new Error(`Failed fetching from server: ${mazeleaderboardInfo.error}`); }
             }
             catch (err){
                 console.error('Api call failed, retrying in 5s...', err);
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
-        console.log(dailyleaderboardInfo)
 
         // Sort the entries for the day list
-        const sortedTodayTimes = dailyleaderboardInfo.today.sort((a, b) => a.time - b.time);
+        const sortedTodayTimes = mazeleaderboardInfo.today.sort((a, b) => a.time - b.time);
         const dailyboardInner = this.querySelector('.daily-board .leaderboard-inner');
         while(dailyboardInner.firstChild){ dailyboardInner.firstChild.remove(); }
         for(const [i, entry] of sortedTodayTimes.entries()){
@@ -158,7 +157,7 @@ export default class DailyLeaderboardPanel extends HTMLElement{
             dailyboardInner.appendChild(newEntry);
         }
 
-        const sortedBestTimes = dailyleaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
+        const sortedBestTimes = mazeleaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
         const alltimeboardInner = this.querySelector('.all-time-board .leaderboard-inner');
         while(alltimeboardInner.firstChild){ alltimeboardInner.firstChild.remove(); }
         for(const [i, entry] of sortedBestTimes.entries()){
@@ -167,8 +166,8 @@ export default class DailyLeaderboardPanel extends HTMLElement{
         }
 
         // averge times and such
-        const timesArray = dailyleaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
-        const maxTime = Math.max(...dailyleaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
+        const timesArray = mazeleaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
+        const maxTime = Math.max(...mazeleaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
         const barGraph = this.querySelector('.bar-graph');
 
         // set the time and date from the hovered bar
@@ -205,4 +204,4 @@ export default class DailyLeaderboardPanel extends HTMLElement{
         setDateTime(lastEntry.averageTime, lastEntry.dateString, timesArray.length-1);
     };
 };
-customElements.define('daily-leaderboard-panel', DailyLeaderboardPanel);
+customElements.define('maze-leaderboard-panel', MazeLeaderboardPanel);

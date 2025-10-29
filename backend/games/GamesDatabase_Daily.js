@@ -1,13 +1,13 @@
 const path = require('path');
 const Database = require('better-sqlite3');
-const db = new Database(path.join(__dirname, './nytDatabase.db'));
+const db = new Database(path.join(__dirname, './gamesDatabase.db'));
 const Utils = require(path.join(__dirname, '../Utils.js'));
 
 db.prepare(`
     CREATE TABLE IF NOT EXISTS daily_times (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        time INTEGER,
+        time REAL,
         dateString TEXT,
         checksUsed INTEGER,
         revealUsed TEXT,

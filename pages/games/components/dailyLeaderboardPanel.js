@@ -4,18 +4,18 @@ import AverageTimeBar from './averageTimeBar.js';
 import { formatSecondsToHMS } from '../js/utils.js';
 
 AddStyle(`
-    .mini-leaderboard-panel{
-        background-color: var(--mini-theme);
+    .daily-leaderboard-panel{
+        background-color: var(--daily-theme);
     }
 
-    .mini-leaderboard-panel .leaderboard-row{
+    .daily-leaderboard-panel .leaderboard-row{
         display: flex;
         justify-content: center;
         padding: 20px 0px;
         gap: 10px;
     }
 
-    .mini-leaderboard-panel .leaderboard-row > div{
+    .daily-leaderboard-panel .leaderboard-row > div{
         display: flex;
         flex-direction: column;
         align-items; center;
@@ -25,43 +25,43 @@ AddStyle(`
         border-radius: 10px
     }
 
-    .mini-leaderboard-panel .leaderboard-row div b{
+    .daily-leaderboard-panel .leaderboard-row div b{
         display: flex;
         justify-content: center;
     }
 
-    .mini-leaderboard-panel .leaderboard-outer{
+    .daily-leaderboard-panel .leaderboard-outer{
         overflow-x: hidden;
         overflow-y: auto;
     }
 
-    .mini-leaderboard-panel .avg-time-row{
+    .daily-leaderboard-panel .avg-time-row{
         display: flex;
         justify-content: center;
     }
 
-    .mini-leaderboard-panel .avg-time-row > div{
+    .daily-leaderboard-panel .avg-time-row > div{
         display: flex;
         flex-direction: column;
     }
 
-    .mini-leaderboard-panel .avg-time-row .flex-row{
+    .daily-leaderboard-panel .avg-time-row .flex-row{
         display: flex;
     }
 
-    .mini-leaderboard-panel .avg-time-display{
+    .daily-leaderboard-panel .avg-time-display{
         display: flex;
     }
 
-    .mini-leaderboard-panel .left-side{
+    .daily-leaderboard-panel .left-side{
         position: relative;
     }
 
-    .mini-leaderboard-panel .bar-graph{
+    .daily-leaderboard-panel .bar-graph{
         display: flex;
     }
 
-    .mini-leaderboard-panel .hover-line{
+    .daily-leaderboard-panel .hover-line{
         position: absolute;
         top: 0px;
         width: 900px;
@@ -69,7 +69,7 @@ AddStyle(`
         pointer-events: none;
     }
 
-    .mini-leaderboard-panel .date-display{
+    .daily-leaderboard-panel .date-display{
         fill: var(--text);
         width: 900px;
         white-space: nowrap;
@@ -79,7 +79,7 @@ AddStyle(`
         height: 30px;
     }
 
-    .mini-leaderboard-panel .date-display > div{
+    .daily-leaderboard-panel .date-display > div{
         width: 200px;
         display: flex;
         align-items center;
@@ -87,16 +87,16 @@ AddStyle(`
         position: absolute;
     }
 
-    .mini-leaderboard-panel .time-display{
+    .daily-leaderboard-panel .time-display{
         transform: translateY(-12px);
     }
 `);
 
-export default class MiniLeaderboardPanel extends HTMLElement{
+export default class DailyLeaderboardPanel extends HTMLElement{
     constructor(){
         super();
 
-        this.classList.add('mini-leaderboard-panel');
+        this.classList.add('daily-leaderboard-panel', 'hidden');
 
         this.innerHTML = `
             <div class="leaderboard-row">
@@ -133,14 +133,14 @@ export default class MiniLeaderboardPanel extends HTMLElement{
     };
 
     async loadPage(){
-        let minileaderboardInfo;
-        while (!minileaderboardInfo?.success) {
+        let dailyleaderboardInfo;
+        while (!dailyleaderboardInfo?.success) {
             try{
-                const response = await fetch('/nytimes/mini/times/get');
+                const response = await fetch('/games/daily/times/get');
                 if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
-                minileaderboardInfo = await response.json();
-                if(!minileaderboardInfo.success){ throw new Error(`Failed fetching from server: ${minileaderboardInfo.error}`); }
+                dailyleaderboardInfo = await response.json();
+                if(!dailyleaderboardInfo.success){ throw new Error(`Failed fetching from server: ${dailyleaderboardInfo.error}`); }
             }
             catch (err){
                 console.error('Api call failed, retrying in 5s...', err);
@@ -149,7 +149,7 @@ export default class MiniLeaderboardPanel extends HTMLElement{
         }
 
         // Sort the entries for the day list
-        const sortedTodayTimes = minileaderboardInfo.today.sort((a, b) => a.time - b.time);
+        const sortedTodayTimes = dailyleaderboardInfo.today.sort((a, b) => a.time - b.time);
         const dailyboardInner = this.querySelector('.daily-board .leaderboard-inner');
         while(dailyboardInner.firstChild){ dailyboardInner.firstChild.remove(); }
         for(const [i, entry] of sortedTodayTimes.entries()){
@@ -157,7 +157,7 @@ export default class MiniLeaderboardPanel extends HTMLElement{
             dailyboardInner.appendChild(newEntry);
         }
 
-        const sortedBestTimes = minileaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
+        const sortedBestTimes = dailyleaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
         const alltimeboardInner = this.querySelector('.all-time-board .leaderboard-inner');
         while(alltimeboardInner.firstChild){ alltimeboardInner.firstChild.remove(); }
         for(const [i, entry] of sortedBestTimes.entries()){
@@ -166,8 +166,8 @@ export default class MiniLeaderboardPanel extends HTMLElement{
         }
 
         // averge times and such
-        const timesArray = minileaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
-        const maxTime = Math.max(...minileaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
+        const timesArray = dailyleaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
+        const maxTime = Math.max(...dailyleaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
         const barGraph = this.querySelector('.bar-graph');
 
         // set the time and date from the hovered bar
@@ -204,4 +204,4 @@ export default class MiniLeaderboardPanel extends HTMLElement{
         setDateTime(lastEntry.averageTime, lastEntry.dateString, timesArray.length-1);
     };
 };
-customElements.define('mini-leaderboard-panel', MiniLeaderboardPanel);
+customElements.define('daily-leaderboard-panel', DailyLeaderboardPanel);

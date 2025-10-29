@@ -1,7 +1,8 @@
 const path = require('path');
 const Utils = require(path.join(__dirname, '../Utils.js'));
-const NytimesDatabase_Mini = require(path.join(__dirname, './NytimesDatabase_Mini.js'));
-const NytimesDatabase_Daily = require(path.join(__dirname, './NytimesDatabase_Daily.js'));
+const GamesDatabase_Mini = require(path.join(__dirname, './GamesDatabase_Mini.js'));
+const GamesDatabase_Daily = require(path.join(__dirname, './GamesDatabase_Daily.js'));
+const GamesDatabase_Maze = require(path.join(__dirname, './GamesDatabase_Maze.js'));
 
 async function getMiniCrossword(){
     const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini.json';
@@ -90,32 +91,121 @@ async function getLetterBoxed(){
     return { success: false };
 };
 
-const NyTimesResponses = new Map();
+const MAZE_WIDTH = 13; // HAS TO BE ODD SO THERE IS A CENTER TO THE MAZE
+const MAZE_HEIGHT = 13; // HAS TO BE ODD SO THERE IS A CENTER TO THE MAZE
+function generateMaze(){
+    /************ CREATE GRID ARRAY ***************/
+    const grid = [];
+    for (let y = 0; y < MAZE_HEIGHT; y++) {
+        const row = [];            
+        for (let x = 0; x < MAZE_WIDTH; x++) {
+            row.push({
+                x,
+                y,
+                visited: false,
+                walls: { top: true, right: true, bottom: true, left: true }
+            })
+        }
+        grid.push(row);
+    }
 
-async function updateNytimesGames(){
+    /************ GENERATE MAZE ***************/
+    const stack = [];
+    const start = grid[Math.floor(MAZE_HEIGHT / 2)][Math.floor(MAZE_WIDTH / 2)];
+    start.visited = true;
+    stack.push(start);
+
+    while (stack.length) {
+        const current = stack[stack.length - 1];
+
+        const { x, y } = current;
+        const neighbors = [];
+
+        const directions = [
+            { dir: 'top', nx: x, ny: y - 1 },
+            { dir: 'right', nx: x + 1, ny: y },
+            { dir: 'bottom', nx: x, ny: y + 1 },
+            { dir: 'left', nx: x - 1, ny: y },
+        ];
+
+        for (const { dir, nx, ny } of directions) {
+            if (nx < 0 || ny < 0 || nx >= MAZE_WIDTH || ny >= MAZE_HEIGHT){ continue; }
+
+            const neighbor = grid[ny][nx];
+            if (neighbor && !neighbor.visited) { neighbors.push({ direction: dir, cell: neighbor }); }
+        }
+
+        if (!neighbors.length) {
+            stack.pop();
+            continue;
+        }
+
+        const { direction, cell: next } = neighbors[Math.floor(Math.random() * neighbors.length)];
+
+        const opposite = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' };
+        current.walls[direction] = false;
+        next.walls[opposite[direction]] = false;
+
+        next.visited = true;
+        stack.push(next);
+    }    
+
+    /************ ENCODE MAZE SO THE FRONTEND CAN DRAW IT ***************/
+    const encodedGrid = [];
+    for(const row of grid){
+        const encodedRow = row.map((cell) => {
+            const encodeArray = [];
+            for(const dir of Object.values(cell.walls)){ encodeArray.push(Number(dir)); }
+            return encodeArray.join('');
+        });
+        encodedGrid.push(encodedRow);
+    }
+    
+    /************ PICK A RANDOM CORNER TO BE THE GOAL ***************/
+    const goal = [Math.random() >= .5 ? 1 : MAZE_WIDTH, Math.random() >= .5 ? 1 : MAZE_HEIGHT];
+
+    /************ WRAP MAZE IN BLANK SPACE ***************/
+    encodedGrid.splice(0, 0, Array.from(new Array(MAZE_WIDTH), () => '1111')); // top
+    encodedGrid.push(Array.from(new Array(MAZE_WIDTH), () => '1111')); // bottom
+
+    for (let y = 0; y < encodedGrid.length; y++) {
+        encodedGrid[y].splice(0, 0, '1111'); // left
+        encodedGrid[y].push('1111'); // right
+    }
+
+    return { grid: encodedGrid, goal: goal };
+};
+
+const gamesResponses = new Map();
+
+async function updateGames(){
     console.log('Updating game objects');
 
     const miniResponse = await getMiniCrossword();
-    NyTimesResponses.set('miniCrossword', miniResponse);
-    NytimesDatabase_Mini.addNewGameBoard(miniResponse);
+    gamesResponses.set('miniCrossword', miniResponse);
+    GamesDatabase_Mini.addNewGameBoard(miniResponse);
 
     const dailyResponse = await getDaily();
-    NyTimesResponses.set('daily', dailyResponse);
-    NytimesDatabase_Daily.addNewGameBoard(dailyResponse);
+    gamesResponses.set('daily', dailyResponse);
+    GamesDatabase_Daily.addNewGameBoard(dailyResponse);
 
     const connectionsResponse = await getConnections();
-    NyTimesResponses.set('connections', connectionsResponse);
+    gamesResponses.set('connections', connectionsResponse);
 
     const letterBoxedResponse = await getLetterBoxed();
-    NyTimesResponses.set('letterBoxed', letterBoxedResponse);
+    gamesResponses.set('letterBoxed', letterBoxedResponse);
+
+    const grid = generateMaze();
+    gamesResponses.set('maze', grid);
+    GamesDatabase_Maze.addNewGameBoard(grid);
 };
-updateNytimesGames();
+updateGames();
 
 module.exports = {
-    gameBoards: NyTimesResponses,
+    gameBoards: gamesResponses,
     getMiniCrossword,
     getDaily,
     getConnections,
     getLetterBoxed,
-    updateNytimesGames,
+    updateGames,
 };

@@ -68,17 +68,24 @@ export default class leaderboardEntry extends HTMLElement{
                 <div class="seconds">${formatSecondsToHMS(seconds)}</div>
                 <div class="milliseconds">.${milliseconds ? milliseconds : '000'}</div>
             </div>
-            ${showDate ? 
-                `<div class="date-scored right">${parsedDate.toDateString()}</div>`
-                :
-                `
-                    ${entryData.revealUsed === 'true' ?
-                        `<div class="checks-used right" title="Reveal Used">${entryData.checksUsed} checks used*</div>` :
-                        `<div class="checks-used right">${entryData.checksUsed} checks used</div>`
-                    }
-                `
-            }
         `;
+
+        if(showDate){
+            const dateDisplay = document.createElement('div');
+            dateDisplay.classList.add('date-scored', 'right');
+            dateDisplay.innerHTML = parsedDate.toDateString();
+            this.appendChild(dateDisplay);
+        }
+        else if(entryData.checksUsed !== undefined){
+            const checksDisplay = document.createElement('div');
+            checksDisplay.classList.add('checks-used', 'right');
+            checksDisplay.innerHTML = `${entryData.checksUsed} checks used`;
+            if(entryData.revealUsed){
+                checksDisplay.setAttribute('title', 'Reveal Used');
+                checksDisplay.innerHTML += '*';
+            }
+            this.appendChild(checksDisplay);
+        }
     };
 };
 customElements.define('leaderboard-entry', leaderboardEntry);

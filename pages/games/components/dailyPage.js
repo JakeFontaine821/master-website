@@ -8,7 +8,7 @@ import './winPopup.js';
 import './dropDown.js';
 
 AddStyle(`
-    .mini-page .config-row{
+    .daily-page .config-row{
         width: 100%;
         height: 50px;
         position: relative;
@@ -21,19 +21,19 @@ AddStyle(`
         border-bottom: 2px solid var(--shadow-background);
     }
 
-    .mini-page .config-row > *{
+    .daily-page .config-row > *{
         user-select: none;
         cursor: pointer;
         display: flex;
         align-self: center;
     }
 
-    .mini-page .config-row > .dropdown-section{
+    .daily-page .config-row > .dropdown-section{
         position: absolute;
         right: 0px;
     }
 
-    .mini-page .game-section{
+    .daily-page .game-section{
         flex: 1;
         display: flex;
         justify-content: center;
@@ -41,7 +41,7 @@ AddStyle(`
         gap: 20px;
     }
 
-    .mini-page .game-section .grid-section{
+    .daily-page .game-section .grid-section{
         display: flex;
         flex-direction: column;
         justify-content: start;
@@ -49,7 +49,7 @@ AddStyle(`
         gap: 5px;
     }
 
-    .mini-page .game-section .current-clue{
+    .daily-page .game-section .current-clue{
         padding: 10px 25px;
         width: 600px;
         height: 50px;
@@ -58,35 +58,34 @@ AddStyle(`
         background-color: var(--highlight-background);
     }
 
-    .mini-page .game-section .grid-container{
+    .daily-page .game-section .grid-container{
         display: flex;
         flex-direction: column;
         justify-content: start;
         border: 2px solid black;
     }
 
-    .mini-page .list-container{
+    .daily-page .list-container{
         display: flex;
         flex-direction: column;
         width: 200px;
     }
 
-    .mini-page .list-container .list-title{
+    .daily-page .list-container .list-title{
         text-align: left;
     }
 
-    .mini-page .list-container .list-outer{
-        flex: 1;
-        position: relative;
+    .daily-page .list-container .list-outer{
+        height: 650px;
+        overflow-y: auto;
     }
 
-    .mini-page .list-container .list-inner{
+    .daily-page .list-container .list-inner{
         display: flex;
         flex-direction: column;
-        position: absolute;
     }
 
-    .mini-page .clue-row{
+    .daily-page .clue-row{
         width: 100%;
         display: flex;
         align-items: center;
@@ -96,42 +95,42 @@ AddStyle(`
         user-select: none;
     }
 
-    .mini-page .clue-row:hover{
+    .daily-page .clue-row:hover{
         background-color: var(--hover);
     }
 
-    .mini-page .clue-row.highlighted{
+    .daily-page .clue-row.highlighted{
         background-color: var(--hover);
     }
 
-    .mini-page .clue-row.kinda-highlighted{
+    .daily-page .clue-row.kinda-highlighted{
         background-color: var(--highlight-background);
     }
 
-    .mini-page .clue-row > div{
+    .daily-page .clue-row > div{
         display: flex;
         align-self: center;
     }
 
-    .mini-page .clue-row .clue-label{
+    .daily-page .clue-row .clue-label{
         justify-content: end;
     }
 
-    .mini-page .clue-row .clue{
+    .daily-page .clue-row .clue{
         justify-content: start;
         flex: 1;
     }
 `);
 
-export default class MiniPage extends HTMLElement{
+export default class DailyPage extends HTMLElement{
     constructor(){
         super();
 
-        this.classList.add('mini-page', 'page', 'hidden');
+        this.classList.add('daily-page', 'page', 'hidden');
 
         this.innerHTML = `
             <div class="page-container">
-                <div class="header-row">Mini Crossword :)</div>
+                <div class="header-row">Daily Crossword :)</div>
                 <div class="config-row">
                     <div class="timer-display">00:00</div>
                     <div class="pause-button"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M360-320h80v-320h-80v320Zm160 0h80v-320h-80v320ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></div>
@@ -169,7 +168,7 @@ export default class MiniPage extends HTMLElement{
 
             while (!apiCall) {
                 try{
-                    const response = await fetch('/nytimes/mini');
+                    const response = await fetch('/games/daily');
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
                     apiCall = response;
@@ -180,11 +179,8 @@ export default class MiniPage extends HTMLElement{
                 }
             }
 
-            // const apiCall = await fetch('https://server-lkt6.onrender.com/nytimes/min');
-            const miniJson = await apiCall.json();
-            // if(!miniJson.success){ return document.querySelector('.loading-screen').setErrorText('Fetch failed - reload the page'); }
-            const dataBody = miniJson.data.body[0];
-            // if(!dataBody){ return document.querySelector('.loading-screen').setErrorText('Failed to parse data object - reload the page'); }
+            const dailyJson = await apiCall.json();
+            const dataBody = dailyJson.data.body[0];
 
             // When clue row is clicked display info here
             const currentClueDisplay = this.querySelector('.current-clue');
@@ -195,7 +191,7 @@ export default class MiniPage extends HTMLElement{
             this.saveObject = {
                 'name': 'AAA',
                 'time': 0,
-                'dateString': miniJson.data.publicationDate,
+                'dateString': dailyJson.data.publicationDate,
                 'checksUsed': 0,
                 'revealUsed': 'false',
             };
@@ -351,6 +347,10 @@ export default class MiniPage extends HTMLElement{
             // Select the first clue
             selectClue(this.clueElements[0]);
 
+            /**********************************************************************************************************/
+            /*                                      GENERAL GAME STUFF                                                */
+            /**********************************************************************************************************/
+
             // Setup play timer variables
             this.elapsedMilliseconds = 0;
             this.playTime = 0;
@@ -491,7 +491,7 @@ export default class MiniPage extends HTMLElement{
                     this.saveObject['name'] = name;
                     this.saveObject['time'] = parseFloat((this.playTime + (this.elapsedMilliseconds / 1000)).toFixed(4));
 
-                    const saveResponse = await fetch('/nytimes/mini/times/set', {
+                    const saveResponse = await fetch('/games/daily/times/set', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(this.saveObject)
@@ -559,4 +559,4 @@ export default class MiniPage extends HTMLElement{
         this.classList.add('hidden');
     };
 };
-customElements.define('mini-page', MiniPage);
+customElements.define('daily-page', DailyPage);
