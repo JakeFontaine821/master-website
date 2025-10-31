@@ -118,10 +118,10 @@ const player_running_right = new Image();
 player_running_right.src = '/games/images/running_right.png';
 
 const playerImages = {
-    'idle_left': { image: player_idle_left, frameCount: 4},
-    'idle_right': { image: player_idle_right, frameCount: 4},
-    'running_left': { image: player_running_left, frameCount: 3},
-    'running_right': { image: player_running_right, frameCount: 3}
+    'idle_left': { image: player_idle_left, frameCount: 3},
+    'idle_right': { image: player_idle_right, frameCount: 3},
+    'running_left': { image: player_running_left, frameCount: 4},
+    'running_right': { image: player_running_right, frameCount: 4}
 };
 
 export {

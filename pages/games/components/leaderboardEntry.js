@@ -66,7 +66,7 @@ export default class leaderboardEntry extends HTMLElement{
             <div class="name">${entryData.name}</div>
             <div class="name">
                 <div class="seconds">${formatSecondsToHMS(seconds)}</div>
-                <div class="milliseconds">.${milliseconds ? milliseconds : '000'}</div>
+                <div class="milliseconds">.${milliseconds ? `${milliseconds}`.padEnd(3, '0') : '000'}</div>
             </div>
         `;
 

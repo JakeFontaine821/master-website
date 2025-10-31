@@ -42,7 +42,7 @@ export default class MazePage extends HTMLElement{
 
         this.ORIGINAL_TILE_SIZE = 32;
         this.TILE_SCALE = 5; // 5
-        this.WIN_DISTANCE = 15;
+        this.WIN_DISTANCE = 30;
         this.innerHTML = `
             <div class="page-container">
                 <div class="header-row">Maze Crossword :)</div>
