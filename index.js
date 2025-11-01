@@ -8,7 +8,15 @@ const Utils = require(path.join(__dirname, './backend/Utils.js'));
 /**************************************************************************************/
 /*                  LANDING SITE                                                      */
 /**************************************************************************************/
-app.get('/', (req, res) => res.json({ success: true }));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/index.html')));
+app.get('/projects', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/projects.html')));
+app.get('/about', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/about.html')));
+app.get('/resume', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/resume.html')));
+
+/**************************************************************************************/
+/*                  PIXEL PAINTER                                                      */
+/**************************************************************************************/
+app.get('/pixelpainter', (req, res) => res.sendFile(path.join(__dirname, '/pages/pixelPainter/index.html')));
 
 /**************************************************************************************/
 /*                          GAMES                                                     */

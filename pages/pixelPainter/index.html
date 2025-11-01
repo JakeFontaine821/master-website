@@ -1,0 +1,1014 @@
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Jake's Pixel Painter</title>
+    <!-- <link rel="icon" type="image/x-icon" href="/images/favicon.ico"> -->
+
+    <style>
+        :root{
+            --text: #e1f3f2;
+            --background: #0a1918;
+            --primary: #9BCFCB;
+            --secondary: #242424;
+            --accent: #6DFBF5;
+            --grey-scale: #564956;
+            --selection: #ff3f3f;
+        }
+
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+        }
+
+        /*************************** Fonts ***************************/
+
+        .poppins-medium {
+            font-family: "Poppins", sans-serif;
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .poppins-bold {
+            font-family: "Poppins", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /*************************** General Classes ***************************/
+        .hidden{
+            display: none !important;
+        }
+
+        .invisible{
+            visibility: hidden !important;
+        }
+
+        *[disabled]{
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .cursor-pointer{
+            cursor: pointer !important;
+        }
+
+        .cursor-cell{
+            cursor: cell;
+        }
+
+        /************************* Actual Page Styling ************************/
+
+        .root-page{
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .root-page > .content-container{
+            flex: 1;
+            display: flex;
+            padding: 0 50px;
+        }
+
+        .root-page > .content-container > div{
+            flex: 1;
+        }
+
+        .root-page .left-side{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            align-items: start;
+            padding: 0 10px;
+        }
+
+        .root-page .header{
+            font-size: 50px;
+            color: var(--text);
+        }
+
+        .root-page .setting{
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            user-select: none;
+        }
+
+        .root-page .dropper-tool-button{
+            fill: var(--text);
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .root-page .dropper-tool-button:hover{
+            border: 1px solid var(--primary);
+        }
+
+        .root-page .dropper-tool-button.selected{
+            border: 1px solid var(--accent);
+        }
+
+        .root-page .setting > :is(input, toggle-switch, svg, .dropper-tool-button, select, button){
+            cursor: pointer;
+        }
+
+        .root-page .left-side .spacer{
+            height: 15px;
+        }
+
+        .root-page .right-side{
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+            column-gap: 3px;
+            row-gap: 3px;
+            padding: 10px 0;
+        }
+
+        .root-page .right-side .draw-buttons{
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+            gap: 15px;
+        }
+
+        .root-page .right-side .color-buttons{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .root-page .right-side .button{
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary);
+            border: 2px solid var(--grey-scale);
+            border-radius: 4px;
+            fill: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .root-page .right-side .button.selected{
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+        }
+
+        .root-page .right-side .color-buttons .button.set:hover{
+            border: 2px solid var(--accent);
+        }
+
+        .root-page .right-side :is(.control-buttons, .draw-mode-buttons){
+            display: flex;
+            justify-content: start;
+            align-items: end;
+            gap: 3px;
+        }
+
+        .root-page .right-side .draw-settings-buttons{
+            display: flex;
+            gap: 15px;
+        }
+
+        .root-page .right-side .canvas-container{
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .root-page canvas{
+            background-image: url("./background-tile.png");
+        }
+
+        .root-page .animation-panel-section{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            height: 27px;
+            transition: height 1s;
+        }
+
+        .root-page .animation-panel-section.active{
+            height: auto;
+        }
+
+        .root-page .animation-panel-section .panel-tab-row{
+            width: 100%;
+            display: flex;
+            align-items: end;
+            height: 27px;
+        }
+
+        .root-page .animation-panel-section .panel-tab-row > .spacer{
+            flex: 1;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .root-page .animation-panel-section .panel-tab{
+            border: 1px solid var(--accent);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 3px 15px;
+            user-select: none;
+            cursor: pointer;
+            fill: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        /************************* Toggle Switch ******************************/
+
+        .toggle-switch{
+            background-color: var(--background);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            display: flex;
+            width: 35px;
+            height: 18px;
+            padding: 3px;
+            align-items: center;
+            position: relative;
+        }
+
+        .toggle-switch .switch{
+            height: 15px;
+            width: 15px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            position: absolute;
+            transition: transform .4s, background-color .4s;
+        }
+
+        .toggle-switch.checked .switch{
+            transform: translateX(20px);
+            background-color: var(--primary);
+        }
+
+        /*********************** Slider  Input *********************************/
+
+        .slider-input{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 150px;
+        }
+
+        .slider-input > div:is(.min-container, .max-container){
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-input > .slider-container{
+            flex: 1;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-input > .slider-container .bar-background{
+            flex: 1;
+            height: 6px;
+            background-color: var(--text);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .slider-input > .slider-container .bar-fill {
+            position: absolute;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .slider-input > .slider-container .nob{
+            height: 10px;
+            width: 10px;
+            position: absolute;
+            background-color: var(--secondary);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            left: 0;
+        }
+
+        .slider-input > .slider-container .nob:hover{
+            border: 2px solid var(--accent);
+        }
+
+        .slider-input > .slider-container .value-popup{
+            position: absolute;
+            background-color: var(--secondary);
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            padding: 0 3px;
+            transform: translateX(-50%);
+            left: 0;
+            bottom: 15px;
+        }
+
+        /*********************** Animation Panel *******************************/
+
+        .animation-panel{
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .animation-panel .settings-section{
+            display: flex;
+            padding: 3px 0;
+            gap: 15px;
+            width: 100vw;
+            justify-content: center;
+        }
+
+        .animation-panel .settings-section > div{
+            display: flex;
+            gap: 15px;
+        }
+
+        .animation-panel :is(.settings-left, .settings-right){
+            flex: 1;
+        }
+
+        .animation-panel .settings-left{
+            justify-content: end;
+        }
+
+        .animation-panel .settings-right{
+            justify-content: start;
+        }
+
+        .animation-panel .toggle-play-setting{
+            border: 2px solid transparent;
+            border-radius: 4px;
+        }
+
+        .animation-panel .toggle-play-setting:hover{
+            border: 2px solid var(--accent);
+        }
+
+        .animation-panel .animation-row{
+            flex: 1;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .animation-panel .frame-containers{
+            display: flex;
+            align-items: center;
+        }
+
+        .animation-panel .animation-result-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10px;
+            fill: var(--text);
+        }
+
+        .animation-panel canvas{
+            border: 2px solid var(--background);
+            cursor: pointer;
+        }
+
+        .animation-panel canvas.selected{
+            border: 2px solid var(--selection);
+        }
+
+        .animation-panel canvas.animating{
+            border: 2px solid var(--accent);
+        }
+
+        .animation-panel .spritesheet-save-button{
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 5px;
+        }
+
+        .animation-panel .spritesheet-save-button:hover{
+            border: 1px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="root-page">
+        <div class="content-container poppins-medium">
+            <div class="left-side">
+                <div class="header poppins-bold">Pixel Painter</div>
+                <div class="setting canvas-width-setting">
+                    Canvas Width (pixels):
+                    <select class="canvas-width-input">
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                        <option value="128">128</option>
+                    </select>
+                </div>
+                <div class="setting canvas-height-setting">
+                    Canvas Height (pixels):
+                    <select class="canvas-height-input">
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                        <option value="64">64</option>
+                        <option value="128">128</option>
+                    </select>
+                </div>
+
+                <div class="spacer"></div>
+
+                <div class="setting draw-color-picker">
+                    Select Drawing Color:
+                    <input type="color" class="draw-color-input" value="#ff0000">
+                    <div class="dropper-tool-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M120-120v-190l358-358-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-358 358H120Zm80-80h78l332-334-76-76-334 332v78Zm447-410 96-96-37-37-96 96 37 37Zm0 0-37-37 37 37Z"/></svg>
+                    </div>
+                </div>
+
+                <div class="spacer"></div>
+
+                <div class="setting outline">
+                    Outline: 
+                    <toggle-switch class="outline-toggle checked"></toggle-switch>
+                </div>
+                <div class="setting outline-color-row">
+                    Select Outline Color:
+                    <input type="color" class="outline-color-input" value="#000000">
+                </div>
+
+                <div class="spacer"></div>
+
+                <div class="setting dividers">
+                    Dividers: 
+                    <toggle-switch class="dividers-toggle checked"></toggle-switch>
+                </div>
+                <div class="setting saving">Save File: 
+                    <input type="text" class="save-file-name">.png
+                    <button class="save-button poppins-medium">Save</button>
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="blank"></div>
+                <div class="draw-settings-buttons">
+                    <div class="draw-mode-buttons">
+                        <div class="button selected" value="draw"  title="Draw"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg></div>
+                        <div class="button"          value="erase" title="Erase"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M690-240h190v80H610l80-80Zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160H190Zm296-80 314-322-198-198-442 456 64 64h262Zm-6-240Z"/></svg></div>
+                        <div class="button"          value="fill"  title="Fill"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M346-140 100-386q-10-10-15-22t-5-25q0-13 5-25t15-22l230-229-106-106 62-65 400 400q10 10 14.5 22t4.5 25q0 13-4.5 25T686-386L440-140q-10 10-22 15t-25 5q-13 0-25-5t-22-15Zm47-506L179-432h428L393-646Zm399 526q-36 0-61-25.5T706-208q0-27 13.5-51t30.5-47l42-54 44 54q16 23 30 47t14 51q0 37-26 62.5T792-120Z"/></svg></div>
+                        <div class="button"          value="move"  title="Move"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M512-40q-82 0-154-37.5T240-182L48-464l19-19q20-21 49.5-24t53.5 14l110 76v-383q0-17 11.5-28.5T320-840q17 0 28.5 11.5T360-800v537L212-366l95 138q35 51 89 79.5T512-120q103 0 175.5-72.5T760-368v-392q0-17 11.5-28.5T800-800q17 0 28.5 11.5T840-760v392q0 137-95.5 232.5T512-40Zm-72-440v-400q0-17 11.5-28.5T480-920q17 0 28.5 11.5T520-880v400h-80Zm160 0v-360q0-17 11.5-28.5T640-880q17 0 28.5 11.5T680-840v360h-80ZM486-300Z"/></svg></div>
+                    </div>
+                    <div class="control-buttons">
+                        <div class="button undo-button"  title="Undo"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z"/></svg></div>
+                        <div class="button redo-button"  title="Redo"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M396-200q-97 0-166.5-63T160-420q0-94 69.5-157T396-640h252L544-744l56-56 200 200-200 200-56-56 104-104H396q-63 0-109.5 40T240-420q0 60 46.5 100T396-280h284v80H396Z"/></svg></div>
+                        <div class="button clear-button" title="Clear Canvas"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></div>
+                        <div class="button reset-button" title="Reset Canvas View"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-320v-100q0-25 17.5-42.5T540-480h100v60H540v100h-60Zm60 240q-25 0-42.5-17.5T480-140v-100h60v100h100v60H540Zm280-240v-100H720v-60h100q25 0 42.5 17.5T880-420v100h-60ZM720-80v-60h100v-100h60v100q0 25-17.5 42.5T820-80H720Zm111-480h-83q-26-88-99-144t-169-56q-117 0-198.5 81.5T200-480q0 72 32.5 132t87.5 98v-110h80v240H160v-80h94q-62-50-98-122.5T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q129 0 226.5 79.5T831-560Z"/></svg></div>
+                    </div>
+                </div>
+                <div class="draw-buttons">
+                    <div class="color-buttons">
+                        <div class="button set selected" title="#ff0000" style="background-color: #ff0000;"></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                        <div class="button"              title="Empty" ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="animation-panel-section poppins-medium">
+            <div class="panel-tab-row">
+                <div class="spacer"></div>
+                <div class="panel-tab">Animation Panel
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M480-360 280-560h400L480-360Z"/></svg>
+                    <svg class="hidden" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="m280-400 200-200 200 200H280Z"/></svg>
+                </div>
+                <div class="spacer"></div>
+            </div>
+            <animation-panel></animation-panel>
+        </div>-->
+    </div>
+
+    <script src="/pixelPainter/toggleSwitch.js"></script>
+    <script src="/pixelPainter/sliderInput.js"></script>
+    <!-- <script src="AnimationPanel.js"></script> -->
+    <script>
+        class DrawableCanvas{
+            constructor(){
+                const canvas = document.createElement('canvas');
+                canvas.classList.add('cursor-cell');
+                canvas.setAttribute('width', '768px');
+                canvas.setAttribute('height', '768px');
+
+                canvas.numberOfCellsWidth = 16;
+                canvas.numberOfCellsHeight = 16;
+                canvas.cellWidth = canvas.width / canvas.numberOfCellsWidth; // pixel width of cell
+                canvas.cellHeight = canvas.height / canvas.numberOfCellsHeight; // pixel height of cell
+
+                canvas.locationX = 0;
+                canvas.locationY = 0;
+                canvas.drawScale = canvas.width / canvas.numberOfCellsWidth;
+
+                canvas.drawColor = '#ff0000';
+                canvas.drawDividers = true;
+                canvas.strokeWidth = 1;
+                canvas.outlineColor = '#000000';
+                canvas.drawOutlines = true;
+
+                canvas.canDraw = true;
+                canvas.drawMode = 'draw';
+                canvas.lastStroke = [];
+                canvas.undoIndex = canvas.lastStroke.length - 1;
+
+                canvas.cells = [];
+                for(let i = 0; i < canvas.numberOfCellsHeight; i++){ canvas.cells.push(new Array(canvas.numberOfCellsWidth)); }
+
+                /****************************** BIG IMPORTANT ******************************/
+                // Handle the user clicking down on the canvas
+                canvas.drawing = false;
+                canvas.moving = false;
+                canvas.addEventListener('mousedown', e => {
+                    if(!canvas.canDraw){ return; }
+
+                    if(canvas.drawMode === 'move'){
+                        canvas.moving = true;
+                        canvas.beginningOfMoveX = e.clientX;
+                        canvas.beginningOfMoveY = e.clientY;
+                    }
+                    else{
+                        // clear undo/redo strokes before adding a new one
+                        while(canvas.undoIndex !== canvas.lastStroke.length-1){ canvas.lastStroke.pop(); }
+
+                        if(canvas.lastStroke.length >= 40){ canvas.lastStroke.shift(); } // Cap the undo to 40
+                        canvas.lastStroke.push([]);
+                        canvas.undoIndex = canvas.lastStroke.length - 1;
+
+                        if(canvas.drawMode === 'fill'){ canvas.fillBlock(e.offsetX, e.offsetY); }
+                        else if(canvas.drawMode === 'draw' || canvas.drawMode === 'erase'){
+                            canvas.drawing = true;
+                            canvas.colorCell(e.offsetX, e.offsetY);
+                        }
+                    }
+                });
+
+                // Mouse up and leave listeners handle the user ending the stroke
+                canvas.addEventListener('mouseleave', () => {canvas.drawing = false;});
+                window.addEventListener('mouseup', () => {canvas.drawing = false; canvas.moving = false;});
+
+                // Handle the continueation of a stroke
+                window.addEventListener('mousemove', e => {
+                    if(canvas.moving){
+                        canvas.locationX += e.clientX - canvas.beginningOfMoveX;
+                        canvas.locationY += e.clientY - canvas.beginningOfMoveY;
+
+                        canvas.beginningOfMoveX = e.clientX;
+                        canvas.beginningOfMoveY = e.clientY;
+                        canvas.draw();
+                    }
+                    else if(e.target === canvas && canvas.drawing){
+                        canvas.colorCell(e.offsetX, e.offsetY);
+                    }
+                });
+
+                // Handle Zoom from the user scrolling
+                canvas.addEventListener('wheel', e => {
+                    e.preventDefault();
+
+                    const scaledDeltaY = Math.sign(event.deltaY) * Math.log1p(Math.abs(event.deltaY)) * 0.02;
+                    const scale = e.deltaY > 0 ? 1 - scaledDeltaY : 1/(1 + scaledDeltaY);
+                    const newScale = Math.max(1, Math.min(75, canvas.drawScale * scale));
+
+                    if(newScale !== canvas.drawScale){
+                        canvas.drawScale = newScale;
+                        canvas.locationX = (canvas.locationX - e.offsetX) * scale + e.offsetX;
+                        canvas.locationY = (canvas.locationY - e.offsetY) * scale + e.offsetY;
+                    }
+
+                    canvas.draw();
+                });
+
+                for(const propName of Object.getOwnPropertyNames(DrawableCanvas.prototype)){
+                    if(propName === 'constructor'){ continue; }
+                    if(typeof this[propName] === 'function'){ canvas[propName] = this[propName].bind(canvas); }
+                }
+
+                return canvas;
+            };
+
+            draw(){
+                const ctx = this.getContext('2d');
+                ctx.clearRect(0, 0, this.width, this.height);
+
+                // draw cells
+                for(let y = 0; y < this.cells.length; y++){
+                    for(let x = 0; x < this.cells[y].length; x++){
+                        if(!this.cells[y][x]){ continue; }
+                        ctx.fillStyle = this.cells[y][x];
+                        ctx.fillRect(this.locationX + x * this.drawScale, this.locationY + y * this.drawScale, this.drawScale, this.drawScale);
+
+                        if(!this.drawOutlines){ continue; }
+                        ctx.lineWidth = this.strokeWidth;
+                        ctx.strokeStyle = this.outlineColor;
+                        if(!this.cells?.[y-1]?.[x]){ this.drawLine(this.locationX + x * this.drawScale, this.locationY + y * this.drawScale, this.locationX + (x+1) * this.drawScale, this.locationY + y * this.drawScale); } // Above
+                        if(!this.cells?.[y]?.[x-1]){ this.drawLine(this.locationX + x * this.drawScale, this.locationY + y * this.drawScale, this.locationX + x * this.drawScale, this.locationY + (y+1) * this.drawScale); } // Left
+                        if(!this.cells?.[y+1]?.[x]){ this.drawLine(this.locationX + x * this.drawScale, this.locationY + (y+1) * this.drawScale, this.locationX + (x+1) * this.drawScale, this.locationY + (y+1) * this.drawScale); } // Below
+                        if(!this.cells?.[y]?.[x+1]){ this.drawLine(this.locationX + (x+1) * this.drawScale, this.locationY + y * this.drawScale, this.locationX + (x+1) * this.drawScale, this.locationY + (y+1) * this.drawScale); } // Right
+                    }
+                }
+
+                const widthOfCanvas = (this.numberOfCellsWidth * this.drawScale);
+                const heightOfCanvas = (this.numberOfCellsHeight * this.drawScale);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#000000';
+
+                // Draw the border around the canvas
+                this.drawLine(this.locationX, this.locationY, this.locationX + widthOfCanvas, this.locationY); // Top
+                this.drawLine(this.locationX, this.locationY + heightOfCanvas, this.locationX + widthOfCanvas, this.locationY + heightOfCanvas); // Bottom
+                this.drawLine(this.locationX, this.locationY, this.locationX, this.locationY + heightOfCanvas); // Left
+                this.drawLine(this.locationX + widthOfCanvas, this.locationY, this.locationX + widthOfCanvas, this.locationY + heightOfCanvas); // Right
+                
+                // draw lines over cells
+                if(!this.drawDividers || this.drawScale < 4){ return; }
+
+                // in this context 'i' is the cell we're on
+                for(let i = 1; i <= this.numberOfCellsWidth-1; i++){ this.drawLine(this.locationX + (i * this.drawScale), this.locationY, this.locationX + (i * this.drawScale), this.locationY + (this.numberOfCellsHeight * this.drawScale)); }
+                for(let i = 1; i <= this.numberOfCellsHeight-1; i++){ this.drawLine(this.locationX, this.locationY + (i * this.drawScale), this.locationX + (this.numberOfCellsWidth * this.drawScale), this.locationY + (i * this.drawScale)); }
+            };
+
+            print(canvas, includeOutlines=true){
+                const ctx = this.getContext('2d');
+                ctx.clearRect(0, 0, this.width, this.height);
+
+                // draw cells
+                for(let y = 0; y < canvas.cells.length; y++){
+                    for(let x = 0; x < canvas.cells[y].length; x++){
+                        if(!canvas.cells[y][x]){ continue; }
+                        ctx.fillStyle = canvas.cells[y][x];
+                        ctx.fillRect(x, y, 1, 1);
+
+                        if(!includeOutlines || !canvas.drawOutlines){ continue; }
+                        ctx.lineWidth = canvas.strokeWidth;
+                        ctx.strokeStyle = canvas.outlineColor;
+                        if(!canvas.cells?.[y-1]?.[x]){ this.drawLine(x, y, (x+1), y); } // Above
+                        if(!canvas.cells?.[y]?.[x-1]){ this.drawLine(x, y, x, (y+1)); } // Left
+                        if(!canvas.cells?.[y+1]?.[x]){ this.drawLine(x, (y+1), (x+1), (y+1)); } // Below
+                        if(!canvas.cells?.[y]?.[x+1]){ this.drawLine((x+1), y, (x+1), (y+1)); } // Right
+                    }
+                }
+            };
+
+            colorCell(pixelX, pixelY){
+                const y = Math.floor((pixelY - this.locationY) / this.drawScale);
+                const x = Math.floor((pixelX - this.locationX) / this.drawScale);
+                if(y < 0 || y >= this.numberOfCellsHeight || x < 0 || x >= this.numberOfCellsWidth){ return; } // Off canvas
+
+                // New value to fill in the cell width
+                const newValue = (() => {
+                    if(this.drawMode === 'draw'){ return this.drawColor; }
+                    else if(this.drawMode === 'erase'){ return undefined; }
+                })();
+
+                // Check the distance from the new point to the last one in the current stroke
+                // If the distance is too far, itll create skipping in the line, no good
+                // In order to keep the stroke clean no matter how fast the mouse moves, create new points in between the last and new
+                // to fill in the space between
+                const lastColoredCell = this.lastStroke[this.lastStroke.length-1].slice(-1)[0];
+                const pointsToColor = [];
+                if(lastColoredCell){
+                    const differenceInXSquare = Math.pow((pixelX - this.locationX) - (lastColoredCell.pixelX - this.locationX), 2);
+                    const differenceInYSquare = Math.pow((pixelY - this.locationY) - (lastColoredCell.pixelY - this.locationY), 2);
+                    const distFromLastColoredCell = Math.sqrt(differenceInXSquare + differenceInYSquare);
+
+                    if(distFromLastColoredCell > this.drawScale){
+                        const pointsInBetween = Math.floor(distFromLastColoredCell / this.drawScale);
+                        const angleRAD = Math.atan2((pixelY - lastColoredCell.pixelY), (pixelX - lastColoredCell.pixelX));
+
+                        for (let i = 1; i <= pointsInBetween; i++) {
+                            const newX = (lastColoredCell.pixelX - this.locationX) + (this.drawScale * i) * Math.cos(angleRAD);
+                            const newY = (lastColoredCell.pixelY - this.locationY) + (this.drawScale * i) * Math.sin(angleRAD);
+
+                            pointsToColor.push({pixelX: newX, pixelY: newY, x: Math.floor(newX / this.drawScale), y: Math.floor(newY / this.drawScale)});
+                        }
+                    }
+                }
+                pointsToColor.push({pixelX, pixelY, x, y});
+
+                for(const {x, y} of pointsToColor){
+                    if(this.cells[y][x] !== newValue){
+                        this.lastStroke[this.lastStroke.length-1].push({pixelX, pixelY, x, y, previous: this.cells[y][x], newValue});
+                        this.cells[y][x] = newValue;
+
+                        // dispatch event for coloring in a new cell
+                        this.dispatchEvent(Object.assign(new Event('colorcell'), {y, x, color: newValue}));
+                    }
+                }
+
+                this.draw();
+            };
+
+            fillBlock(pixelX, pixelY){
+                const y = Math.floor((pixelY - this.locationY) / this.drawScale);
+                const x = Math.floor((pixelX - this.locationX) / this.drawScale);
+                if(y < 0 || y >= this.numberOfCellsHeight || x < 0 || x >= this.numberOfCellsWidth){ return; } // Off canvas
+
+                const oldValue = this.cells[y][x];
+                if(this.drawColor === oldValue){ return; } // same color
+
+                const floodFillQueue = [[x, y]];
+                while(floodFillQueue.length){
+                    const [checkX, checkY] = floodFillQueue.shift();
+
+                    if(this.cells[checkY][checkX] === oldValue){
+                        this.lastStroke[this.lastStroke.length-1].push({ x: checkX, y: checkY, previous: this.cells[checkY][checkX], newValue: this.drawColor});
+                        this.cells[checkY][checkX] = this.drawColor;
+
+                        //                  Right                       Left                Below               Above
+                        const neighbors = [[checkX + 1, checkY], [checkX - 1, checkY], [checkX, checkY + 1], [checkX, checkY - 1]];
+                        for(const [neighborX, neighborY] of neighbors){
+                            if(neighborX < 0 || neighborX >= this.numberOfCellsWidth || neighborY < 0 || neighborY >= this.numberOfCellsHeight){ continue; } // out of bounds
+                            floodFillQueue.push([neighborX, neighborY]);
+                        }
+                    }
+                }
+
+                this.draw();
+            };
+
+            setDrawMode(newMode){
+                this.drawMode = newMode;
+            };
+
+            changeResolution(width, height){
+                this.numberOfCellsWidth = width;
+                this.numberOfCellsHeight = height;
+
+                this.cells = [];
+                for(let i = 0; i < this.numberOfCellsHeight; i++){ this.cells.push(new Array(this.numberOfCellsWidth)); }
+                this.draw();
+            };
+
+            setDrawColor(newColor){
+                this.drawColor = newColor;
+            };
+
+            setDrawOutlines(toggle){
+                this.drawOutlines = toggle;
+                this.dispatchEvent(Object.assign(new Event('outlinechanges'), {outlineOptions: {draw: this.drawOutlines}}));
+
+                this.draw();
+            };
+
+            setOutlineColor(newColor){
+                this.outlineColor = newColor;
+                this.dispatchEvent(Object.assign(new Event('outlinechanges'), {outlineOptions: {color: this.outlineColor}}));
+
+                this.draw();
+            };
+
+            setDrawDividers(toggle){
+                this.drawDividers = toggle;
+                this.draw();
+            };
+
+            undoStroke(){
+                if(!this.lastStroke.length){ return; } // nothing to undo
+                if(this.undoIndex < 0){ return; } // out of bounds
+
+                for(const { x, y, previous} of this.lastStroke[this.undoIndex]){
+                    this.cells[y][x] = previous;
+                    this.dispatchEvent(Object.assign(new Event('colorcell'), {y, x, color: previous}));
+                }
+                this.undoIndex--;
+
+                this.draw();
+            };
+
+            redoStroke(){
+                if(!this.lastStroke.length){ return; } // nothing to redo
+                if(this.undoIndex >= this.lastStroke.length-1){ return; } // out of bounds
+
+                this.undoIndex++;
+                for(const { x, y, newValue} of this.lastStroke[this.undoIndex]){
+                    this.cells[y][x] = newValue;
+                    this.dispatchEvent(Object.assign(new Event('colorcell'), {y, x, color: newValue}));
+                }
+
+                this.draw();
+            };
+
+            clearCanvas(){
+                while(this.undoIndex !== this.lastStroke.length-1){ this.lastStroke.pop(); } // clear undo/redo strokes
+
+                let needNewStroke = true;
+                for (let y = 0; y < this.cells.length; y++) {
+                    for (let x = 0; x < this.cells[y].length; x++) {
+                        if(typeof this.cells[y][x] === 'string'){
+                            if(needNewStroke){ // last stroke here so it only adds a stroke if there was something to clear
+                                this.lastStroke.push([]);
+                                this.undoIndex = this.lastStroke.length - 1;
+                                needNewStroke = false;
+                            }
+
+                            this.lastStroke[this.lastStroke.length-1].push({ x, y, previous: this.cells[y][x]});
+                            this.cells[y][x] = undefined;
+                        }
+                    }
+                }
+
+                this.draw();
+            };
+
+            resetCanvasView(){
+                this.locationX = 0;
+                this.locationY = 0;
+                this.drawScale = this.width / this.numberOfCellsWidth;
+                this.draw();
+            };
+
+            // This is really annoying to repeat for lines so just turning it into a function
+            drawLine(x1, y1, x2, y2){
+                const ctx = this.getContext('2d');
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            };
+        };
+
+        // create the canvas
+        const canvas = new DrawableCanvas();
+        document.querySelector('.right-side').appendChild(canvas);
+        canvas.boundingRect = canvas.getBoundingClientRect();
+
+        // canvas width and height
+        const canvasWidthInput = document.querySelector('.canvas-width-input');
+        const canvasHeightInput = document.querySelector('.canvas-height-input');
+        const setResolution = (w, h) => {
+            const width = parseInt(w);
+            const height = parseInt(h);
+            canvas.changeResolution(width, height);
+            // animationPanel.SetResolution(width, height);
+        }
+        canvasWidthInput.addEventListener('change', () => setResolution(canvasWidthInput.value, canvasHeightInput.value));
+        canvasHeightInput.addEventListener('change', () =>  setResolution(canvasWidthInput.value, canvasHeightInput.value));
+
+        // toggle the cell's outline
+        const outlineToggle = document.querySelector('.outline-toggle');
+        const outlineSizeRow = document.querySelector('.outline-size-row')
+        const outlineColorRow = document.querySelector('.outline-color-row');
+        outlineToggle.addEventListener('change', () => {
+            canvas.setDrawOutlines(outlineToggle.checked);
+            outlineSizeRow.toggleAttribute('disabled', !outlineToggle.checked);
+            outlineColorRow.toggleAttribute('disabled', !outlineToggle.checked);
+        });
+
+        // toggle the cell's outline color
+        const outlineColorInput = document.querySelector('.outline-color-input');
+        outlineColorInput.addEventListener('change', () => canvas.setOutlineColor(outlineColorInput.value));
+
+        // toggle the dividers
+        const dividersToggle = document.querySelector('.dividers-toggle');
+        dividersToggle.addEventListener('change', () => canvas.setDrawDividers(dividersToggle.checked));
+
+        document.querySelector('.save-button').addEventListener('click', () => {
+            const tempCanvas = new DrawableCanvas();
+            tempCanvas.width = parseInt(canvasWidthInput.value);
+            tempCanvas.height = parseInt(canvasHeightInput.value);
+            tempCanvas.print(canvas);
+
+            const link = document.createElement('a');
+            link.href = tempCanvas.toDataURL('image/png');
+            link.download = `${document.querySelector('.save-file-name').value}.png`;
+            link.click();
+        });
+
+        const drawModeButtons = document.querySelector('.draw-mode-buttons');
+        for(const modeButton of Array.from(drawModeButtons.children)){
+            modeButton.addEventListener('click', () => {
+                drawModeButtons.querySelector('.selected').classList.remove('selected');
+                canvas.setDrawMode(modeButton.getAttribute('value'));
+                modeButton.classList.add('selected');
+            });
+        }
+
+        document.querySelector('.undo-button').addEventListener('click', () => canvas.undoStroke());
+        document.querySelector('.redo-button').addEventListener('click', () => canvas.redoStroke());
+        document.querySelector('.clear-button').addEventListener('click', () => canvas.clearCanvas());
+        document.querySelector('.reset-button').addEventListener('click', () => canvas.resetCanvasView());
+
+        const saveColorContainer = document.querySelector('.color-buttons');
+        for(const colorButton of Array.from(saveColorContainer.children)){
+            colorButton.addEventListener('click', () => {
+                const currentSelected = saveColorContainer.querySelector('.selected');
+                if(currentSelected){ currentSelected.classList.remove('selected'); }
+
+                if(colorButton.classList.contains('set')){
+                    canvas.canDraw = true;
+                    canvas.setDrawColor(colorButton.style.backgroundColor);
+                }
+                else{ canvas.canDraw = false; }
+
+                colorButton.classList.add('selected');
+            });
+        }
+
+        const setColor = (color) => {
+            if(typeof color !== 'string'){ color = `#${((1 << 24) | (color[0] << 16) | (color[1] << 8) | color[2]).toString(16).slice(1)}`;}
+            const currentSelected = saveColorContainer.querySelector('.selected');
+
+            currentSelected.setAttribute('title', color);
+            currentSelected.classList.add('set');
+            currentSelected.style.backgroundColor = color;
+
+            canvas.canDraw = true;
+            canvas.setDrawColor(color);
+        };
+
+        // color picker
+        const colorInput = document.querySelector('.draw-color-input');
+        colorInput.addEventListener('change', () => setColor(colorInput.value));
+
+        // dropper tool
+        const dropperTool = document.querySelector('.dropper-tool-button');
+        dropperTool.addEventListener('click', () => {
+            if(dropperTool.classList.contains('selected')){ return; }
+
+            document.addEventListener('mousedown', e => {
+                if(e.target === canvas){
+                    const tempCanvas = new DrawableCanvas();
+                    tempCanvas.width = parseInt(canvasWidthInput.value);
+                    tempCanvas.height = parseInt(canvasHeightInput.value);
+                    tempCanvas.print(canvas, false);
+
+                    const ctx = tempCanvas.getContext('2d');
+                    const pixelData = ctx.getImageData(Math.floor((e.offsetX - canvas.locationX) / canvas.drawScale), Math.floor((e.offsetY - canvas.locationY) / canvas.drawScale), 1, 1).data;
+                    if(pixelData[3] !== 0){ setColor(pixelData); }
+                }
+
+                canvas.canDraw = true;
+                canvas.classList.remove('cursor-pointer');
+                dropperTool.classList.remove('selected');
+            }, {once: true});
+
+            canvas.canDraw = false;
+            canvas.classList.add('cursor-pointer');
+            dropperTool.classList.add('selected');
+        });
+
+        // Set up the animation tab
+        // const animationSection = document.querySelector('.animation-panel-section');
+        // const panelTab = document.querySelector('.panel-tab');
+        // panelTab.addEventListener('click', () => {
+        //     for(const arrow of panelTab.children){ arrow.classList.toggle('hidden'); }
+
+        //     const setToActive = animationSection.classList.toggle('active');
+        //     canvas.setAttribute('width', setToActive ? '600px' : '768px');
+        //     canvas.setAttribute('height', setToActive ? '600px' : '768px');
+        //     canvas.draw();
+
+        //     canvas.resetCanvasView();
+        // });
+
+        // Handle drawing on the frames and copying from the frames
+        // const animationPanel = document.querySelector('.animation-panel');
+        // canvas.addEventListener('colorcell', ({y, x, color}) => {
+        //     if(!animationSection.classList.contains('active')){ return; }
+        //     animationPanel.ColorOnSelectedCanvas(y, x, color);
+        // });
+
+        // canvas.addEventListener('outlinechanges', ({outlineOptions}) => {
+        //     if(!animationSection.classList.contains('active')){ return; }
+        //     animationPanel.UpdateOutlineOptions(outlineOptions);
+        // });
+
+        // animationPanel.addEventListener('copyfromframe', ({cellsArray, outlineOptions}) => canvas.CopyFromFrame(cellsArray, outlineOptions));
+
+        // draw the canvas on load
+        canvas.draw();
+    </script>
+</body>
+</html>

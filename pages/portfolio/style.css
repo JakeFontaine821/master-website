@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin Sans:700|Josefin Sans:400');
+
+:root{
+    /* --background-color: #232323;
+    --border-color: #ffffff22;
+
+    --link-base-color: #ffffffb0;
+    --link-hover-color: #ffffff; */
+
+    /* Like a soft pink, kinda like it lol */
+    --text: #FCF3F3;
+    --hover-text: #e5b58b;
+    /* --background: #232323; */
+    /* --background: #082121; */
+    --background: #060F19;
+    /* --background: #120C07; */
+    /* --background: #150404; */
+    --primary: #1F2D2D;
+    --accent: #788CA1;
+
+    /* --text       = --text       | Used for text */
+    /* --background = --background | Used for background */
+    /* --primary    = --hover-text | Used for hovering over links and buttons */
+    /* --secondary  = --primary    | Used for button backgrounds */
+    /* --accent     = --accent     | Used for border lines */
+
+    /* bit more subtle than ^ */
+    /* --text: #fafafa;
+    --background: #232323;
+    --primary: #8a7b7b;
+    --secondary: #100e0e;
+    --accent: #7c6e6e; */
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    background-color: var(--background);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-x: hidden;
+
+    font-family: 'Josefin Sans';
+    color: var(--text);
+    font-weight: 400;
+}
+
+/*****************************************************************/
+/*****                 Website Nav Section                   *****/
+
+nav{
+    width: 40.3%;
+    height: 100px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+
+    display: flex;
+
+    z-index: 3;
+    background-color: var(--background);
+
+    position: fixed;
+}
+
+nav div{
+    padding: 3rem 1.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+nav .nav-name{
+    flex-basis: 80%;
+    border-right: 2px solid var(--accent);
+}
+
+nav .nav-name a{
+    padding-right: 5%;
+    padding-left: 5%;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+nav .nav-icons{
+    flex-grow: 1;
+    gap: 1rem;
+}
+
+nav .anchor,
+nav div a{
+    color: var(--text);
+    cursor: pointer;
+    transition: all .3s;
+}
+
+nav .anchor:hover,
+nav a:hover{
+    color: var(--hover-text);
+}
+
+/*****************************************************************/
+/*****                 Landing page section                  *****/
+
+.landing-page{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--text);
+
+    position: relative;
+}
+
+.landing-page h1{
+    font-size: 50px;
+}
+
+.landing-page h1,
+.landing-page h3{
+    z-index: 1;
+    margin-bottom: -10px;
+    pointer-events: none;
+}
+
+.landing-page p{
+    position: absolute;
+    bottom: 0;
+    font-style: italic;
+    pointer-events: none;
+}
+
+.landing-page canvas{
+    position: absolute;
+    /* border: 2px solid red; */
+    width: 100%;
+    height: 100%;
+    /* background-color: green; */
+    z-index: 0;
+}
+
+/*****************************************************************/
+/*****                  Project nav section                  *****/
+
+.project-page{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+.project-nav-bar{
+    width: 100vw;
+    height: 75px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    position: absolute;
+    bottom: 0;
+    
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+
+    background-color: var(--background);
+}
+
+.project-links{
+    display: flex;
+    /* gap: 3rem; */
+
+    align-items: center;
+    justify-content: center;
+}
+
+.project-links p{
+    color: var(--text);
+    cursor: pointer;
+    transition: all .3s;
+    padding: 10px 50px;
+}
+
+.with-border{
+    border-right: 2px solid var(--accent);
+}
+
+.project-links p:hover{
+    color: var(--hover-text);
+}
+
+/*****************************************************************/
+/*****                 Project Page Section                  *****/
+
+.scrolling-background{
+    position: absolute;
+    width: 500vw;
+    height: 100vh;
+    z-index: 0;
+    display: flex;
+
+    animation-timing-function: ease;
+}
+
+article{
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: 100px;
+
+    color: var(--text);
+}
+
+article div{
+    height: 100%;
+}
+
+/***** Project Title *****/
+.page-title-section{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.page-title-section h1{
+    font-size: 50px;
+    padding-right: 50px;
+}
+
+/***** Project Description *****/
+.page-text-section{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 75px;
+}
+
+.page-text-section div{
+    border-radius: 10px;
+    border-top: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-text-section p{
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 17px;
+    text-align: center;
+}
+
+.top-section p{
+    line-height: 1.6;
+}
+
+.page-text-section a{
+    padding: 10px;
+    background-color: var(--primary);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 20px;
+    border: 2px solid var(--accent);
+    transition: all .2s;
+}
+
+.page-text-section a:hover{
+    padding: 12px;
+    margin-top: -2px;
+    color: var(--hover-text);
+}
+
+/***** Project Image Section *****/
+.page-image-section{
+    padding: 10px 0px 85px;
+    display: flex;
+    flex-direction: row;
+}
+
+/* Buttons */
+.page-image-section .column{
+    height: 100%;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.page-image-section .image-button-front{
+    height: 60%;
+    width: 100%;
+    background-image: linear-gradient(var(--background), #060F1966, var(--background));
+    position: absolute;
+    z-index: 1;
+
+    cursor: pointer;
+}
+
+.page-image-section .image-button-back{
+    height: 20%;
+    width: 100%;
+
+    background-color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+
+    transition: all .2s;
+}
+
+.page-image-section .image-button-front:hover + .image-button-back{
+    height: 60%;
+}
+
+.page-image-section .image-button-icon{
+    color: var(--text);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Images */
+.page-image-section .images{
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 60px);
+    gap: 5px;
+}
+
+.page-image-section .project-image{
+    width: 50px;
+    border: 1px solid var(--accent);
+    border-radius: 25px;
+}
+
+.test-image{
+    background-image: url(images/File1_Frame0000.jpg);
+    background-position: center;
+    background-size: cover;
+}
+
+/*****************************************************************/
+/*****                     MISC section                      *****/
+
+.kindasmaller{
+    line-height: .2;
+}
+
+.notasbig{
+    line-height: 1.2;
+}
+
+.kindabig{
+    line-height: 1.4;
+}
+
+.big{
+    line-height: 1.6;
+}
+
+.background-shadow{
+    text-shadow: -8px -8px 10px var(--background), 8px -8px 10px var(--background), -8px 8px 10px var(--background), 8px 8px 10px var(--background);
+}
+  

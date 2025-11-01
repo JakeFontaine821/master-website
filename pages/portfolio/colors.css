@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700');
+
+:root{
+    --text: #FCF3F3;
+    --hover-text: #e5b58b;
+    --background: #060F19;
+    --primary: #1F2D2D;
+    --accent: #788CA1;
+}
+
+/*************************** Fonts ***************************/
+
+.josefin-regular {
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+  
+.josefin-medium {
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+  
+.josefin-semibold {
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+}
+  
+.josefin-bold {
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}

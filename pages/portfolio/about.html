@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Jake Fontaine - About Me</title>
+
+    <!--Link to stylesheet-->
+    <link rel="stylesheet" href="/portfolio/colors.css">
+    <link rel="stylesheet" href="/portfolio/style.css">
+
+    <style>
+        .about-page{
+            width: 100vw;
+            height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            position: relative;
+        }
+
+        .about-container{
+            width: 70%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: row;
+        }
+
+        .about-container .about-subsection{
+            width: 50%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            padding: 10px;
+        }
+
+        .about-subsection .my-picture{
+            width: 80%;
+        }
+
+        .about-subsection .about-text{
+            width: 100%;
+        }
+
+        .highlight{
+            color: var(--hover-text);
+            cursor: pointer;
+        }
+
+        .backdrop{
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -2;
+        }
+
+        .cell{
+            position: absolute;
+            width: 25px;
+            aspect-ratio: 1;
+            transition: background-color 2s;
+        }
+    </style>
+
+    <!--Link to use logos from fontawesome-->
+    <script src="https://kit.fontawesome.com/d995b789e7.js" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+    <nav>
+        <div class="nav-name">
+            <a href="/" class="with-border">Home</a>
+            <a href="projects" class="with-border">Projects</a>
+            <a href="about" class="with-border">About me</a>
+            <a href="resume">Resume</a>
+        </div>
+        <div class="nav-icons">
+            <a href="https://www.linkedin.com/in/jake-fontaine-5188a5218/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://github.com/JakeFontaine821" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
+        </div>
+    </nav>
+
+    <div class="about-page">
+        <div class="about-container">
+            <div class="about-subsection">
+                <div class="about-text background-shadow">
+                    <h1>Hello!</h1>
+                    <h2>My name is Jake Fontaine</h2>
+                    <p class="big">I'm from Massachusetts and received my bachelor's degree in Game Development and Simulation Programming from the New England Institute of Technology. During my degree I realized my enjoyment didn't fall in making games, but software engineering and programming. I am passionate and driven to learn, through individual practice I've gained experience with front-end web development and Python for different projects.
+                        <br><br>
+                    Outside of programming I enjoy being active, playing basketball and golf as well as working out. I believe staying active helps me be a better programmer because stepping away and clearing my head has helped solved problems numerous times.
+                    </p>
+                </div>
+            </div>
+            <div class="about-subsection">
+                <img src="/portfolio/images/Myself.JPEG" alt="Picture-of-Myself" class="my-picture">
+            </div>
+        </div>
+    </div>
+
+    <div class="backdrop"></div>
+
+    <script>
+        const backdrop = document.querySelector('.backdrop');
+
+        const numberOfCellsWide = Math.ceil(document.documentElement.clientWidth / 25);
+        const numberOfCellsTall = Math.ceil(document.documentElement.clientHeight / 25);
+        const cells = Array.from(new Array(numberOfCellsTall), () => { return new Array(numberOfCellsWide); });
+        for (let i = 0; i < numberOfCellsTall; i++) {
+            for (let j = 0; j < numberOfCellsWide; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.style.left = `calc(${j} * 25px)`;
+                cell.style.top = `calc(${i} * 25px)`;
+
+                cells[i][j] = cell;
+                backdrop.appendChild(cell);
+            }
+        }
+
+        document.addEventListener('mousemove', e => {
+            const cellXIndex = Math.floor(e.clientX / 25);
+            const cellYIndex = Math.floor(e.clientY / 25);
+            cells[cellYIndex][cellXIndex].style.backgroundColor = 'var(--accent)';
+
+            setTimeout(() => cells[cellYIndex][cellXIndex].style.backgroundColor = 'transparent', 1000);
+        });
+    </script>
+</body>
+</html>
