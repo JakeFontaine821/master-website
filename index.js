@@ -82,8 +82,12 @@ app.get('/games/dev/times', async (req, res) => {
     res.json(allTimesArray);
 });
 app.post('/games/dev/times/delete', async (req, res) => {
+    if(!req.body.game){ return res.json({ success: false, error: 'Missing parameter \'game\'' }); }
     if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
-    return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body));
+    
+    if(req.body.game === 'mini'){ return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body)); }
+    else if(req.body.game === 'daily'){ return res.json(await GamesDatabase_Daily.deleteTimeEntry(req.body)); }
+    else if(req.body.game === 'maze'){ return res.json(await GamesDatabase_Maze.deleteTimeEntry(req.body)); }
 });
 
 /**************************************************************************************/
