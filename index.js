@@ -74,8 +74,14 @@ app.post('/games/maze/times/set', async (req, res) => {
 /*                    GAMES DEV PAGE                                                  */
 /**************************************************************************************/
 app.get('/games/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/games-dev/index.html')));
-app.get('/games/dev/mini/times', async (req, res) => res.json(await GamesDatabase_Mini.getAllTimeEntries()));
-app.post('/games/dev/mini/times/delete', async (req, res) => {
+app.get('/games/dev/times', async (req, res) => {
+    const allTimesArray = [];
+    allTimesArray.push(...GamesDatabase_Mini.getAllTimeEntries().entries.map(entry => ({ game: 'mini', ...entry})));
+    allTimesArray.push(...GamesDatabase_Daily.getAllTimeEntries().entries.map(entry => ({ game: 'daily', ...entry})));
+    allTimesArray.push(...GamesDatabase_Maze.getAllTimeEntries().entries.map(entry => ({ game: 'maze', ...entry})));
+    res.json(allTimesArray);
+});
+app.post('/games/dev/times/delete', async (req, res) => {
     if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
     return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body));
 });
