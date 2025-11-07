@@ -95,7 +95,7 @@
                     const response = await fetch('/games/dev/times/delete', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: entry.id })
+                        body: JSON.stringify({ id: entry.id, game: entry.game })
                     });
                     const data = await response.json();
 
