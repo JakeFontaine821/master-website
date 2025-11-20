@@ -4,6 +4,7 @@ const app = express();
 app.use(express.json());
 app.use('/', express.static(path.join(__dirname, 'pages')));
 const Utils = require(path.join(__dirname, './backend/Utils.js'));
+app.get('/dylanjgrace', (req, res) => res.sendFile(path.join(__dirname, '/pages/yamom/index.html')));
 
 /**************************************************************************************/
 /*                  LANDING SITE                                                      */
@@ -14,7 +15,7 @@ app.get('/about', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfo
 app.get('/resume', (req, res) => res.sendFile(path.join(__dirname, '/pages/portfolio/resume.html')));
 
 /**************************************************************************************/
-/*                  PIXEL PAINTER                                                      */
+/*                  PIXEL PAINTER                                                     */
 /**************************************************************************************/
 app.get('/pixelpainter', (req, res) => res.sendFile(path.join(__dirname, '/pages/pixelPainter/index.html')));
 
