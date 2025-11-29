@@ -19,6 +19,12 @@ app.get('/resume', (req, res) => res.sendFile(path.join(__dirname, '/pages/portf
 app.get('/pixelpainter', (req, res) => res.sendFile(path.join(__dirname, '/pages/pixelPainter/index.html')));
 
 /**************************************************************************************/
+/*                  POOL                                                              */
+/**************************************************************************************/
+const websocket = require('./backend/pool/index.js');
+app.get('/pool', (req, res) => res.sendFile(path.join(__dirname, '/pages/pool/index.html')));
+
+/**************************************************************************************/
 /*                          GAMES                                                     */
 /**************************************************************************************/
 const Games = require(path.join(__dirname, './backend/games/Games.js'));
