@@ -25,6 +25,7 @@ AddStyle(`
         background-color: var(--background);
         overflow: hidden;
 
+        color: var(--text);
         font-family: "Open Sans", sans-serif;
         font-optical-sizing: auto;
         font-weight: 400;
