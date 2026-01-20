@@ -11,5 +11,8 @@ export const inputMap = {
     arrowright: false,
 };
 
-document.addEventListener('keydown', e => inputMap[e.key.toLowerCase()] = true);
+document.addEventListener('keydown', e => {
+    console.log(e)
+    inputMap[e.key.toLowerCase()] = true;
+});
 document.addEventListener('keyup', e => inputMap[e.key.toLowerCase()] = false);

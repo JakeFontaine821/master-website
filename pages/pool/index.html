@@ -9,80 +9,11 @@
     <script type="module" src="/pool/components/landingPage.js"></script>
 </head>
 <body>
-    <!-- <landing-page></landing-page> -->
+    <landing-page></landing-page>
+   <script src="/pool/js/webSocket.js"></script>
+
+    <!-- Canvas and three.js main controller file import-->
     <canvas></canvas>
-    <!-- <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script> -->
-
-    <script>
-        (async () => {
-            const socket = await new WebSocket('ws://localhost:3001');
-
-            // We just spawned in, send player data to server
-            // socket.onopen = () => { socket.send(JSON.stringify({ key: '__HEARTBEAT__', newPlayer: localPlayer })); };
-
-            // listen for message
-            socket.onmessage = ({ data }) => {
-                const message = JSON.parse(data);
-
-                switch(message.key){
-                    case 2:
-                        CONNECTED_PLAYERS.push(new Player(message.newPlayer));
-                        break;
-                    case 3:
-                        for(const player of message.existingPlayers){ CONNECTED_PLAYERS.push(new Player(player)); }
-                        break;
-                };
-            };
-
-            socket.onclose = () => {
-                window.clearInterval(HEART_BEAT_INTERVAL);
-            };
-
-            // example sent message
-            // socket.send(JSON.stringify({ messageType: 1, message: '' }));
-
-            const HEART_BEAT_INTERVAL = setInterval(() => socket.send(JSON.stringify({ key: '__HEARTBEAT__' })), 45_000);
-        })();
-
-        // const landingPage = document.querySelector('landing-page');
-        // landingPage.addEventListener('host', ({name}) => { console.log(name, ' wants to host a game') })
-    </script>
-
     <script type="module" src="/pool/js/gameRoot.js"></script>
-
-    <!-- <script type="module" src="/lib/three.module.min.js"></script>
-
-    <script>
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-        );
-
-        const renderer = new THREE.WebGLRenderer({
-            canvas: document.querySelector('canvas')
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // Add a cube
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-
-        camera.position.z = 3;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-
-        animate();
-    </script> -->
 </body>
 </html>

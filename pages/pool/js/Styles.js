@@ -37,6 +37,13 @@ AddStyle(`
         box-sizing: border-box;
     }
 
+    canvas{
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
     .hidden{
         display: none !important;
     }
