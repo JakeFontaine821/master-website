@@ -35,10 +35,18 @@ const WorldOrigin = new THREE.Object3D();
 // scene.add(cube);
 
 // CAMERA SETTINGS *******************************************************************************************
-const cameraSpeed = .05;
-const cameraRotateSpeed = 1.5;//degrees
-// camera.position.z = -2;
-// camera.rotateY(-Math.PI / 2);
+const cameraSpeed = .02;
+const cameraRotateSpeed = .6;//degrees
+camera.position.y = 1;
+camera.position.x = -1.6;
+
+// Turn Down a bit lel
+const lookDirection1 = camera.getWorldDirection(new THREE.Vector3());
+const axisToRotateOn1 = lookDirection1.cross(math.normalVector3YAxis);
+camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( axisToRotateOn1, math.degreesToRad(-33) ));
+
+// Turn Right
+camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(-90) ));
 
 // LIGHT*******************************************************************************************
 // const ambient = new THREE.AmbientLight(0xffffff, 3);
@@ -55,42 +63,49 @@ for(const light of lights){ scene.add(light); }
 // 
 
 function animate() {
-    if(inputMap.w){
-        const moveDirection = camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(cameraSpeed);
-        camera.position.add(moveDirection);
-    }
-    else if(inputMap.s){
-        const moveDirection = camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(-cameraSpeed);
-        camera.position.add(moveDirection);
-    }
 
-    if(inputMap.a){
-        const lookDirection = camera.getWorldDirection(new THREE.Vector3());
-        const axisToMoveOn = lookDirection.cross(math.normalVector3YAxis).multiplyScalar(-cameraSpeed);
-        camera.position.add(axisToMoveOn);
-    }
-    else if(inputMap.d){
-        const lookDirection = camera.getWorldDirection(new THREE.Vector3());
-        const axisToMoveOn = lookDirection.cross(math.normalVector3YAxis).multiplyScalar(cameraSpeed);
-        camera.position.add(axisToMoveOn);
-    }
+    // if(inputMap.w){
+    //     const moveDirection = camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(cameraSpeed);
+    //     camera.position.add(moveDirection);
+    // }
+    // else if(inputMap.s){
+    //     const moveDirection = camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(-cameraSpeed);
+    //     camera.position.add(moveDirection);
+    // }
 
-    if(inputMap.f){ camera.position.y += cameraSpeed; }
-    if(inputMap.v){ camera.position.y += -cameraSpeed; }
+    const lookDirection = camera.getWorldDirection(new THREE.Vector3());
+    const axisToMoveOn = lookDirection.cross(math.normalVector3YAxis).multiplyScalar(-cameraSpeed);
+    camera.position.add(axisToMoveOn);
 
-    if(inputMap.arrowup){
-        const lookDirection = camera.getWorldDirection(new THREE.Vector3());
-        const axisToRotateOn = lookDirection.cross(math.normalVector3YAxis);
-        camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( axisToRotateOn, math.degreesToRad(cameraRotateSpeed) ));
-    }
-    else if(inputMap.arrowdown){
-        const lookDirection = camera.getWorldDirection(new THREE.Vector3());
-        const axisToRotateOn = lookDirection.cross(math.normalVector3YAxis);
-        camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( axisToRotateOn, math.degreesToRad(-cameraRotateSpeed) ));
-    }
+    camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(-cameraRotateSpeed) ));
 
-    if(inputMap.arrowleft){ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(cameraRotateSpeed) )); }
-    else if(inputMap.arrowright){ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(-cameraRotateSpeed) )); }
+    // if(inputMap.a){
+    //     const lookDirection = camera.getWorldDirection(new THREE.Vector3());
+    //     const axisToMoveOn = lookDirection.cross(math.normalVector3YAxis).multiplyScalar(-cameraSpeed);
+    //     camera.position.add(axisToMoveOn);
+    // }
+    // else if(inputMap.d){
+    //     const lookDirection = camera.getWorldDirection(new THREE.Vector3());
+    //     const axisToMoveOn = lookDirection.cross(math.normalVector3YAxis).multiplyScalar(cameraSpeed);
+    //     camera.position.add(axisToMoveOn);
+    // }
+
+    // if(inputMap.f){ camera.position.y += cameraSpeed; }
+    // if(inputMap.v){ camera.position.y += -cameraSpeed; }
+
+    // if(inputMap.arrowup){
+        // const lookDirection = camera.getWorldDirection(new THREE.Vector3());
+        // const axisToRotateOn = lookDirection.cross(math.normalVector3YAxis);
+        // camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( axisToRotateOn, math.degreesToRad(cameraRotateSpeed) ));
+    // }
+    // else if(inputMap.arrowdown){
+    //     const lookDirection = camera.getWorldDirection(new THREE.Vector3());
+    //     const axisToRotateOn = lookDirection.cross(math.normalVector3YAxis);
+    //     camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( axisToRotateOn, math.degreesToRad(-cameraRotateSpeed) ));
+    // }
+
+    // if(inputMap.arrowleft){ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(cameraRotateSpeed) )); }
+    // else if(inputMap.arrowright){ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVector3YAxis, math.degreesToRad(-cameraRotateSpeed) )); }
 
     requestAnimationFrame(animate);
     renderer.render(scene, camera);

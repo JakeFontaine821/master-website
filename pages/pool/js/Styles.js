@@ -37,6 +37,27 @@ AddStyle(`
         box-sizing: border-box;
     }
 
+    .center{
+        width: 5px;
+        height: 5px;
+        background-color: red;
+        z-index: 998;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        translate: -50% -50%;
+    }
+    .center > *{
+        width: 3px;
+        height: 3px;
+        background-color: black;
+        z-index: 999;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        translate: -50% -50%;
+    }
+
     canvas{
         position: fixed;
         top: 0;
