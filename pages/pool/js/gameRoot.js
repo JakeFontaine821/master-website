@@ -56,6 +56,7 @@ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVecto
 const lights = Array.from(new Array(3), () => new THREE.DirectionalLight(0xffffff, 2));
 for(const light of lights){ light.position.y = 3; }
 lights[0].z = 1;
+lights[1].target = WorldOrigin;
 lights[2].z = -1;
 for(const light of lights){ scene.add(light); }
 // light.position.y = 3;
