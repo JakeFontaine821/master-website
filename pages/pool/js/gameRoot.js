@@ -53,15 +53,29 @@ camera.applyQuaternion(new THREE.Quaternion().setFromAxisAngle( math.normalVecto
 // ambient.position.y = 2;
 // scene.add(ambient);
 
-const lights = Array.from(new Array(3), () => new THREE.DirectionalLight(0xffffff, 2));
-for(const light of lights){ light.position.y = 3; }
-lights[0].z = 1;
-lights[1].target = WorldOrigin;
-lights[2].z = -1;
-for(const light of lights){ scene.add(light); }
+// const lights = Array.from(new Array(3), () => new THREE.DirectionalLight(0xFF9F46 , 3));
+// for(const light of lights){ light.position.y = 3; }
+// lights[0].x = 1;
+// lights[1].target = WorldOrigin;
+// lights[2].x = -1;
+// for(const light of lights){ scene.add(light); }
 // light.position.y = 3;
 // light.target = WorldOrigin;
 // 
+
+const a = new THREE.DirectionalLight(0xFFFFFF , 7);
+a.position.y = 1;
+scene.add(a);
+
+const b = new THREE.DirectionalLight(0xFFEFA6 , 7);
+b.position.y = 1;
+b.position.z = 3;
+scene.add(b);
+
+const c = new THREE.DirectionalLight(0xFFEFA6 , 7);
+c.position.y = 1;
+c.position.z = -3;
+scene.add(c);
 
 function animate() {
 
