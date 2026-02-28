@@ -24,7 +24,6 @@ app.get('/pixelpainter', (req, res) => res.sendFile(path.join(__dirname, '/pages
 const Games = require(path.join(__dirname, './backend/games/Games.js'));
 const GamesDatabase_Mini = require(path.join(__dirname, './backend/games/GamesDatabase_Mini.js'));
 const GamesDatabase_Daily = require(path.join(__dirname, './backend/games/GamesDatabase_Daily.js'));
-const GamesDatabase_Maze = require(path.join(__dirname, './backend/games/GamesDatabase_Maze.js'));
 
 // Serve the webpage
 app.get('/games', (req, res) => res.sendFile(path.join(__dirname, '/games/index.html')));
@@ -34,7 +33,6 @@ app.get('/games/mini', (req, res) => res.json(Games.gameBoards.get('miniCrosswor
 app.get('/games/daily', (req, res) => res.json(Games.gameBoards.get('daily')));
 app.get('/games/connections', (req, res) => res.json(Games.gameBoards.get('connections')));
 app.get('/games/letterBoxed', (req, res) => res.json(Games.gameBoards.get('letterBoxed')));
-app.get('/games/maze', (req, res) => res.json(Games.gameBoards.get('maze')));
 
 // ------------------------ MINI SPECFIC ------------------------
 app.get('/games/mini/times/get', async (req, res) => res.json(await GamesDatabase_Mini.getLeaderboardInfo()));
@@ -60,16 +58,6 @@ app.post('/games/daily/times/set', async (req, res) => {
     res.json(await GamesDatabase_Daily.addTimeEntry(req.body));
 });
 
-// ------------------------ MAZE SPECFIC ------------------------
-app.get('/games/maze/times/get', async (req, res) => res.json(await GamesDatabase_Maze.getLeaderboardInfo()));
-app.post('/games/maze/times/set', async (req, res) => {
-    if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
-    if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
-    if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
-
-    res.json(await GamesDatabase_Maze.addTimeEntry(req.body));
-});
-
 /**************************************************************************************/
 /*                    GAMES DEV PAGE                                                  */
 /**************************************************************************************/
@@ -78,7 +66,6 @@ app.get('/games/dev/times', async (req, res) => {
     const allTimesArray = [];
     allTimesArray.push(...GamesDatabase_Mini.getAllTimeEntries().entries.map(entry => ({ game: 'mini', ...entry})));
     allTimesArray.push(...GamesDatabase_Daily.getAllTimeEntries().entries.map(entry => ({ game: 'daily', ...entry})));
-    allTimesArray.push(...GamesDatabase_Maze.getAllTimeEntries().entries.map(entry => ({ game: 'maze', ...entry})));
     res.json(allTimesArray);
 });
 app.post('/games/dev/times/delete', async (req, res) => {
@@ -87,7 +74,6 @@ app.post('/games/dev/times/delete', async (req, res) => {
     
     if(req.body.game === 'mini'){ return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body)); }
     else if(req.body.game === 'daily'){ return res.json(await GamesDatabase_Daily.deleteTimeEntry(req.body)); }
-    else if(req.body.game === 'maze'){ return res.json(await GamesDatabase_Maze.deleteTimeEntry(req.body)); }
 });
 
 /**************************************************************************************/

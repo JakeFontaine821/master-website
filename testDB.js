@@ -1,8 +1,21 @@
 const path = require('path');
 const Database = require('better-sqlite3');
-const newdb = new Database(path.join(__dirname, '/backend/games/gamesDatabase.db'));
-const db = new Database(path.join(__dirname, '/backend/games/nytimesDatabase.db'));
+const db = new Database(path.join(__dirname, '/backend/games/gamesDatabase.db'));
+// const db = new Database(path.join(__dirname, '/backend/games/nytimesDatabase.db'));
 const Utils = require(path.join(__dirname, '/backend/Utils.js'));
+
+console.log('REMOVING COLUMN topTen FROM TABLE');
+db.prepare('ALTER TABLE mini_times DROP COLUMN topTen').run();
+
+console.log('REMOVING COLUMN placing FROM TABLE');
+db.prepare('ALTER TABLE mini_times DROP COLUMN placing').run();
+
+console.log('DELETING TABLE maze_times');
+db.prepare('DROP TABLE maze_times').run();
+
+console.log('DELETING TABLE maze_data');
+db.prepare('DROP TABLE maze_data').run();
+
 
 /*******************************************************************************************/
 /*                                  USED TO CONVERT TABLE ENTRIES OR COLUMN DATA TYPE      */
@@ -88,62 +101,62 @@ const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 /*******************************************************************************************/
 /*                                  COPY OVER ALL ENTRIES FROM ONE DATABASE TO ANOTHER     */
 /*******************************************************************************************/
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS mini_times (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        time REAL,
-        dateString TEXT,
-        checksUsed INTEGER,
-        revealUsed TEXT,
-        topTen TEXT,
-        placing INTEGER
-    )
-`).run();
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS mini_times (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         name TEXT,
+//         time REAL,
+//         dateString TEXT,
+//         checksUsed INTEGER,
+//         revealUsed TEXT,
+//         topTen TEXT,
+//         placing INTEGER
+//     )
+// `).run();
 
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS mini_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        gameBoard TEXT,
-        dateString TEXT,
-        averageTime REAL
-    )
-`).run();
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS mini_data (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         gameBoard TEXT,
+//         dateString TEXT,
+//         averageTime REAL
+//     )
+// `).run();
 
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_times (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        time REAL,
-        dateString TEXT,
-        checksUsed INTEGER,
-        revealUsed TEXT,
-        topTen TEXT,
-        placing INTEGER
-    )
-`).run();
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS daily_times (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         name TEXT,
+//         time REAL,
+//         dateString TEXT,
+//         checksUsed INTEGER,
+//         revealUsed TEXT,
+//         topTen TEXT,
+//         placing INTEGER
+//     )
+// `).run();
 
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        gameBoard TEXT,
-        dateString TEXT,
-        averageTime REAL
-    )
-`).run();
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS daily_data (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         gameBoard TEXT,
+//         dateString TEXT,
+//         averageTime REAL
+//     )
+// `).run();
 
-const tableNames = ['mini_times', 'mini_data'/*, 'daily_times', 'daily_data'*/];
-for(const table of tableNames){
-    // Get all the entries from the old database
-    const allEntries = db.prepare(`SELECT * from ${table}`).all();
-    console.log('got all entries from ', table);
+// const tableNames = ['mini_times', 'mini_data'/*, 'daily_times', 'daily_data'*/];
+// for(const table of tableNames){
+//     // Get all the entries from the old database
+//     const allEntries = db.prepare(`SELECT * from ${table}`).all();
+//     console.log('got all entries from ', table);
 
-    // Enter all entries into new database and table
-    for(const entry of allEntries){
-        delete entry['id'];
-        const keys = Object.keys(entry);
-        newdb.prepare(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (${keys.map(v => `@${v}`).join(', ')})`).run(entry);
-    }
+//     // Enter all entries into new database and table
+//     for(const entry of allEntries){
+//         delete entry['id'];
+//         const keys = Object.keys(entry);
+//         newdb.prepare(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (${keys.map(v => `@${v}`).join(', ')})`).run(entry);
+//     }
 
-    console.log('All entries copied over :)')
-}
+//     console.log('All entries copied over :)')
+// }

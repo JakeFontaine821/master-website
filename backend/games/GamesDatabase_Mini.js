@@ -10,9 +10,7 @@ db.prepare(`
         time REAL,
         dateString TEXT,
         checksUsed INTEGER,
-        revealUsed TEXT,
-        topTen TEXT,
-        placing INTEGER
+        revealUsed TEXT
     )
 `).run();
 
@@ -36,7 +34,8 @@ function getAllTimeEntries(){
 
 // Return all info for the leaderboard from the mini database
 const getTodaysEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE dateString=@dateString`);
-const getLeaderboardEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE topTen='true'`);
+const getMONTHLeaderboardEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE revealUsed='false' AND dateString LIKE @dateParam ORDER BY time ASC LIMIT 10`);
+const getALLTIMELeaderboardEntriesStatement = db.prepare(`SELECT * FROM mini_times WHERE revealUsed='false' ORDER BY time ASC LIMIT 10`);
 const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM mini_data ORDER BY id DESC LIMIT 30`);
 function getLeaderboardInfo(){
     const returnObj = { success: true };
@@ -45,7 +44,12 @@ function getLeaderboardInfo(){
     try{ returnObj.today = getTodaysEntriesStatement.all(dateStringObj); }
     catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
 
-    try{ returnObj.allTime = getLeaderboardEntriesStatement.all(); }
+    const date = new Date();
+    const a = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, '0')}-%`;
+    try{ returnObj.month = getMONTHLeaderboardEntriesStatement.all({ dateParam: a }); }
+    catch(err){ return { success: false, error: 'Error getting month entries from database' }; }
+
+    try{ returnObj.allTime = getALLTIMELeaderboardEntriesStatement.all(); }
     catch(err){ return { success: false, error: 'Error getting all time entries from database' }; }
 
     try{ returnObj.averageTimes = getAverageTimeStatement.all(); }
@@ -55,52 +59,27 @@ function getLeaderboardInfo(){
 };
 
 const ALLTIME_LEADERBOARD_COUNT = 10;
-const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
-const updateEntryStatement_mini = db.prepare(`UPDATE mini_times SET topTen=@topTen, placing=@placing WHERE id=@id`);
+const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed)`);
 const updateEntryStatement_mini_data = db.prepare(`UPDATE mini_data SET averageTime=@averageTime WHERE dateString=@dateString`);
 async function addTimeEntry(playData){
-    if(playData.revealUsed === 'true'){
-        // If reveal used, by default set topTen flag false and placing to crazy number
-        try{ addEntryStatement_mini.run(Object.assign(playData, { topTen: 'false', placing: 10000 })); }
-        catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
+    // Add the entry to the data base
+    try{ addEntryStatement_mini.run(playData); }
+    catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
+
+    // Update the average times for the day
+    try{
+        let todaysEntries;
+        const updateObj = { dateString: Utils.getEasternDateString() };
+
+        try{ todaysEntries = getTodaysEntriesStatement.all(updateObj); }
+        catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
+
+        updateObj.averageTime = Math.round(todaysEntries.reduce((acc, cur) => acc += cur.time, 0) / todaysEntries.length);
+        updateEntryStatement_mini_data.run(updateObj);
     }
-    else{
-        // If reveal NOT used, by default set topTen true so to be caught by sql query, sorted and updated
-        try{ addEntryStatement_mini.run(Object.assign(playData, { topTen: 'true', placing: ALLTIME_LEADERBOARD_COUNT+1 })); }
-        catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
-
-        // See if the new entry should have any all time leaderboard related flags set
-        try{
-            const currentAllTimeBest = getLeaderboardEntriesStatement.all();
-
-            // Sort the currentLeaderboard based on time
-            currentAllTimeBest.sort((a, b) => a.time - b.time);
-
-            // Entries now that are ordered, set the topTen and placing params based on index in the sorted array
-            for(const [i, timeEntry] of currentAllTimeBest.entries()){
-                timeEntry.topTen = i < ALLTIME_LEADERBOARD_COUNT ? 'true' : 'false';
-                timeEntry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000000;
-
-                updateEntryStatement_mini.run(timeEntry);
-            }
-        }
-        catch(err){ return { success: false, error: `Error setting leaderboard params in database: ${err}` }; }
-
-        // Calculate the average time from today's entries
-        try{
-            let todaysEntries;
-            const updateObj = { dateString: Utils.getEasternDateString() };
-
-            try{ todaysEntries = getTodaysEntriesStatement.all(updateObj); }
-            catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
-
-            updateObj.averageTime = Math.round(todaysEntries.reduce((acc, cur) => acc += cur.time, 0) / todaysEntries.length);
-            updateEntryStatement_mini_data.run(updateObj);
-        }
-        catch(err){
-            console.error('ya mom', err);
-            return { success: false, error: `Error updating average time in database: ${err}` };
-        }
+    catch(err){
+        console.error('ya mom', err);
+        return { success: false, error: `Error updating average time in database: ${err}` };
     }
 
     return { success: true };

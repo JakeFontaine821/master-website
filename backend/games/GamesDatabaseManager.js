@@ -4,8 +4,9 @@ const db = new Database(path.join(__dirname, './gamesDatabase.db'));
 const Utils = require(path.join(__dirname, '../Utils.js'));
 
 db.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_times (
+    CREATE TABLE IF NOT EXISTS games_times (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gameTitle TEXT,
         name TEXT,
         time REAL,
         dateString TEXT,
@@ -15,8 +16,9 @@ db.prepare(`
 `).run();
 
 db.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_data (
+    CREATE TABLE IF NOT EXISTS game_data (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gameTitle TEXT,
         gameBoard TEXT,
         dateString TEXT,
         averageTime REAL
@@ -24,7 +26,7 @@ db.prepare(`
 `).run();
 
 // DEV FUNCTION to return ALL time entries
-const getEntriesStatement = db.prepare(`SELECT * FROM daily_times`);
+const getEntriesStatement = db.prepare(`SELECT * FROM game_times ORDER BY gameTitle ASC`);
 function getAllTimeEntries(){
     const returnObj = { success: true };
     try{ returnObj.entries = getEntriesStatement.all(); }
@@ -32,15 +34,15 @@ function getAllTimeEntries(){
     return returnObj;
 };
 
-// Return all info for the leaderboard from the daily database
-const getTodaysEntriesStatement = db.prepare(`SELECT * FROM daily_times WHERE dateString=@dateString`);
-const getMONTHLeaderboardEntriesStatement = db.prepare(`SELECT * FROM daily_times WHERE revealUsed='false' AND dateString LIKE @dateParam ORDER BY time ASC LIMIT 10`);
-const getALLTIMELeaderboardEntriesStatement = db.prepare(`SELECT * FROM daily_times WHERE revealUsed='false' ORDER BY time ASC LIMIT 10`);
-const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM daily_data ORDER BY id DESC LIMIT 30`);
-function getLeaderboardInfo(){
+// Return all info for the leaderboard from the mini database
+const getTodaysEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND dateString=@dateString`);
+const getMONTHLeaderboardEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND revealUsed='false' AND dateString LIKE @dateParam ORDER BY time ASC LIMIT 10`);
+const getALLTIMELeaderboardEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND revealUsed='false' ORDER BY time ASC LIMIT 10`);
+const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM game_data WHERE gameTitle=@gameTitle ORDER BY id DESC LIMIT 30`);
+function getLeaderboardInfo(param){
     const returnObj = { success: true };
-    const dateStringObj = { dateString: Utils.getEasternDateString() };
 
+    const dateStringObj = { dateString: Utils.getEasternDateString() };
     try{ returnObj.today = getTodaysEntriesStatement.all(dateStringObj); }
     catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
 
@@ -59,11 +61,11 @@ function getLeaderboardInfo(){
 };
 
 const ALLTIME_LEADERBOARD_COUNT = 10;
-const addEntryStatement_daily = db.prepare(`INSERT INTO daily_times (name, time, dateString, checksUsed, revealUsed) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed)`);
-const updateEntryStatement_daily_data = db.prepare(`UPDATE daily_data SET averageTime=@averageTime WHERE dateString=@dateString`);
+const addEntryStatement_mini = db.prepare(`INSERT INTO game_times (name, time, dateString, checksUsed, revealUsed) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed)`);
+const updateEntryStatement_mini_data = db.prepare(`UPDATE game_data SET averageTime=@averageTime WHERE dateString=@dateString`);
 async function addTimeEntry(playData){
     // Add the entry to the data base
-    try{ addEntryStatement_daily.run(playData); }
+    try{ addEntryStatement_mini.run(playData); }
     catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
 
     // Update the average times for the day
@@ -75,7 +77,7 @@ async function addTimeEntry(playData){
         catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
 
         updateObj.averageTime = Math.round(todaysEntries.reduce((acc, cur) => acc += cur.time, 0) / todaysEntries.length);
-        updateEntryStatement_daily_data.run(updateObj);
+        updateEntryStatement_mini_data.run(updateObj);
     }
     catch(err){
         console.error('ya mom', err);
@@ -85,8 +87,8 @@ async function addTimeEntry(playData){
     return { success: true };
 };
 
-const getEntryStatement_daily_data = db.prepare(`SELECT * from daily_data WHERE dateString=@dateString`);
-const addEntryStatement_daily_data = db.prepare(`INSERT INTO daily_data (gameBoard, dateString, averageTime) VALUES (@gameBoard, @dateString, @averageTime)`);
+const getEntryStatement_mini_data = db.prepare(`SELECT * from game_data WHERE dateString=@dateString`);
+const addEntryStatement_mini_data = db.prepare(`INSERT INTO game_data (gameBoard, dateString, averageTime) VALUES (@gameBoard, @dateString, @averageTime)`);
 async function addNewGameBoard(gameBoard){
     const databaseObj = {
         gameBoard: JSON.stringify(gameBoard.data),
@@ -95,17 +97,17 @@ async function addNewGameBoard(gameBoard){
     };
 
     try{ // only add a new one if its not already added, this supports project stopping and starting whenever
-        const currentEntry = getEntryStatement_daily_data.all(databaseObj);
-        if(!currentEntry.length){ addEntryStatement_daily_data.run(databaseObj); }
+        const currentEntry = getEntryStatement_mini_data.all(databaseObj);
+        if(!currentEntry.length){ addEntryStatement_mini_data.run(databaseObj); }
     }
     catch(err){ return { success: false, error: `Error inserting into database: ${err}` }; }
   
     return { success: true };
 };
 
-const getSingleEntryFromId = db.prepare(`SELECT * FROM daily_times WHERE id=@id`);
-const deleteTodaysEntryStatement = db.prepare(`DELETE FROM daily_times WHERE id=@id`);
-const getFastestEntries = db.prepare(`SELECT * FROM daily_times ORDER BY time ASC LIMIT ${ALLTIME_LEADERBOARD_COUNT+5}`);
+const getSingleEntryFromId = db.prepare(`SELECT * FROM game_times WHERE id=@id`);
+const deleteTodaysEntryStatement = db.prepare(`DELETE FROM game_times WHERE id=@id`);
+const getFastestEntries = db.prepare(`SELECT * FROM game_times ORDER BY time ASC LIMIT ${ALLTIME_LEADERBOARD_COUNT+5}`);
 async function deleteTimeEntry(idObj){
     try{
         const entryToDelete = getSingleEntryFromId.get(idObj);
@@ -121,13 +123,13 @@ async function deleteTimeEntry(idObj){
                 entry.topTen = i < ALLTIME_LEADERBOARD_COUNT ? 'true' : 'false';
                 entry.placing = i < ALLTIME_LEADERBOARD_COUNT ? i+1 : 10000;
 
-                updateEntryStatement_daily.run(entry);
+                updateEntryStatement_mini.run(entry);
             }
         }
 
         return { success: true };
     }
-    catch(err){ return { success: false, error: 'Error getting entries from \'daily\' database' }; }
+    catch(err){ return { success: false, error: 'Error getting entries from \'mini\' database' }; }
 };
 
 module.exports = {
