@@ -5,7 +5,6 @@ AddStyle(`
     .leaderboard-entry{
         display: flex;
         align-items: center;
-        width: 350px;
         font-weight: 500;
         gap: 5px;
         padding: 2px 10px;

@@ -124,15 +124,15 @@ async function updateGames(){
 
     const miniResponse = await getMiniCrossword();
     gamesResponses.set('miniCrossword', miniResponse);
-    GamesDatabaseManager.addNewGameBoard(miniResponse);
+    GamesDatabaseManager.addNewGameBoard('mini', miniResponse);
 
-    const midiResponse = await getMidi();
+    const midiResponse = await getMidiCrossword();
     gamesResponses.set('midiCrossword', midiResponse);
-    GamesDatabaseManager.addNewGameBoard(midiResponse);
+    GamesDatabaseManager.addNewGameBoard('midi', midiResponse);
 
-    const dailyResponse = await getDaily();
+    const dailyResponse = await getDailyCrossword();
     gamesResponses.set('dailyCrossword', dailyResponse);
-    GamesDatabaseManager.addNewGameBoard(dailyResponse);
+    GamesDatabaseManager.addNewGameBoard('daily', dailyResponse);
 
     const connectionsResponse = await getConnections();
     gamesResponses.set('connections', connectionsResponse);

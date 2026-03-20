@@ -1,10 +1,11 @@
 const path = require('path');
 const Database = require('better-sqlite3');
+const { constrainedMemory } = require('process');
 const db = new Database(path.join(__dirname, './gamesDatabase.db'));
 const Utils = require(path.join(__dirname, '../Utils.js'));
 
 db.prepare(`
-    CREATE TABLE IF NOT EXISTS games_times (
+    CREATE TABLE IF NOT EXISTS game_times (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         gameTitle TEXT,
         name TEXT,
@@ -35,7 +36,7 @@ function getAllTimeEntries(){
 };
 
 // Return all info for the leaderboard from the mini database
-const getTodaysEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND dateString=@dateString`);
+const getTodaysEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND dateString=@dateString ORDER BY time ASC`);
 const getMONTHLeaderboardEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND revealUsed='false' AND dateString LIKE @dateParam ORDER BY time ASC LIMIT 10`);
 const getALLTIMELeaderboardEntriesStatement = db.prepare(`SELECT * FROM game_times WHERE gameTitle=@gameTitle AND revealUsed='false' ORDER BY time ASC LIMIT 10`);
 const getAverageTimeStatement = db.prepare(`SELECT averageTime, dateString FROM game_data WHERE gameTitle=@gameTitle ORDER BY id DESC LIMIT 30`);
@@ -52,13 +53,13 @@ function getLeaderboardInfo(params){
     catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
 
 
-    try{ returnObj.month = getMONTHLeaderboardEntriesStatement.all(params); }
+    try{ returnObj.monthly = getMONTHLeaderboardEntriesStatement.all(params); }
     catch(err){ return { success: false, error: 'Error getting month entries from database' }; }
 
-    try{ returnObj.allTime = getALLTIMELeaderboardEntriesStatement.all(); }
+    try{ returnObj.allTime = getALLTIMELeaderboardEntriesStatement.all(params); }
     catch(err){ return { success: false, error: 'Error getting all time entries from database' }; }
 
-    try{ returnObj.averageTimes = getAverageTimeStatement.all(); }
+    try{ returnObj.averageTimes = getAverageTimeStatement.all(params); }
     catch(err){ return { success: false, error: 'Error getting average time entry from database' }; }
 
     return returnObj;

@@ -8,25 +8,33 @@
 
     <style>
         .nav-panel{
-            position: relative;
-            height: 100vh;
+            position: fixed;
+            top: 0px;
             width: 75px;
+            height: 100vh;
+            z-index: 999;
+
             display: flex;
             flex-direction: column;
-            justify-content: start;
             align-items: center;
+            justify-content: space-between;
             padding: 15px 0px;
         }
 
-        .nav-panel > *{
+        .nav-panel .container > *{
             height: 60px;
             width: 60px;
             fill: var(--text);
         }
 
         .nav-panel svg{
-            height: 35px;
-            width: 35px;
+            height: 40px;
+            width: 40px;
+            border-radius: 5px;
+        }
+
+        .nav-panel .button:not(.lightmode-toggle) svg{
+            box-shadow: -2px 2px 1px var(--secondary);
         }
 
         .nav-panel .button{
@@ -35,6 +43,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        .nav-panel .button:hover{
+            border: 1px solid var(--background-inverse);
+            border-radius: 15px;
         }
 
         .nav-panel .selection-highlight{
@@ -46,57 +59,40 @@
             transition: top .2s;
             pointer-events: none;
         }
-
-        .page{
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .page .page-container{
-            position: relative;
-            width: 65vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
     </style>
 
     <script type="module" src="/games/components/landingPage.js"></script>
-    <script type="module" src="/games/components/miniPage.js"></script>
-    <script type="module" src="/games/components/dailyPage.js"></script>
+    <script type="module" src="/games/components/crosswordGamePage.js"></script>
+    <script type="module" src="/games/components/gamePageContainer.js"></script>
 </head>
-<body>
-    <landing-page></landing-page>
-    <mini-page></mini-page>
-    <daily-page></daily-page>
+<body class="lightmode">
+    <game-page-container gameCode="mini" gameTitle="Mini Crossword"></game-page-container>
+    <game-page-container gameCode="midi" gameTitle="Midi Crossword" class="hidden"></game-page-container>
+    <game-page-container gameCode="daily" gameTitle="Daily Crossword" class="hidden"></game-page-container>
 
     <!--  NAV PANEL -->
     <div class="nav-panel">
-        <div class="button selected" page="landing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></div>
-        <div class="button" page="mini" disabled><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="15" y="15" width="170" height="170" rx="20" ry="20" fill="#8bbcf6" stroke="#000" stroke-width="10"/><path d="m100 20 80 80-80 80-80-80z"/><path fill="#fff" d="m100 30 35 35-35 35-35-35zm0 70 35 35-35 35-35-35z"/></svg></div>
-        <div class="button" page="daily" disabled><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="15" y="15" width="170" height="170" rx="20" ry="20" stroke="#000" stroke-width="10"/><path fill="#fff" d="M75 16h52v52H75zM16 74h52v52H16zm116 0h52v52h-52zm-58 58h52v52H74zM35 16h33v52H16V35a20 20 0 0 1 19-19m97 116h52v33a20 20 0 0 1-19 19h-33Z"/></svg></div>
-        <div class="selection-highlight"></div>
+        <div class="container game-buttons">
+            <div class="button selected" page="mini" title="Mini Crossword"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none"><rect x="5" y="5" width="190" height="190" rx="20" fill="#000"/><path d="M95 95H15V25a10 10 90 0 1 10-10h70Zm10 0V15h70a10 10 90 0 1 10 10v70Zm0 10h80v70a10 10 90 0 1-10 10h-70Z" fill="#fff"/></svg></div>
+            <div class="button" page="midi" title="Midi Crossword"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none"><rect x="9" y="9" width="182" height="180" rx="15" ry="15" stroke="#000" stroke-width="8" fill="#fff"/><path d="M68 9v180M130 9v180M9 68h180M9 130h180" stroke="#000" stroke-width="8"/><path fill="#000" d="M69 69h60v60H69zm64-58h55v55h-55zM11 133h55v55H11z"/></svg></div>
+            <div class="button" page="daily" title="Daily Crossword"><svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="none"><rect x="9" y="9" width="182" height="180" rx="15" ry="15" stroke="#000" stroke-width="8" fill="#fff"/><path d="M100 10v180Zm-45 0v180Zm90 0v180ZM10 100h180Zm0-45h180Zm0 90h180Z" stroke="#000" stroke-width="8"/><path fill="#000" d="M148 12h40v40h-40zM12 148h40v40H12zm46-90h40v40H58zm45 45h40v40h-40z"/></svg></div>
+            <div class="selection-highlight"></div>
+        </div>
+        <div class="container">
+            <div class="button lightmode-toggle" light-mode title="Switch to dark mode">
+                <div light-mode><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-800v-120h80v120h-80Zm0 760v-120h80v120h-80Zm360-400v-80h120v80H800Zm-760 0v-80h120v80H40Zm708-252-56-56 70-72 58 58-72 70ZM198-140l-58-58 72-70 56 56-70 72Zm564 0-70-72 56-56 72 70-58 58ZM212-692l-72-70 58-58 70 72-56 56Zm98 382q-70-70-70-170t70-170q70-70 170-70t170 70q70 70 70 170t-70 170q-70 70-170 70t-170-70Zm283.5-56.5Q640-413 640-480t-46.5-113.5Q547-640 480-640t-113.5 46.5Q320-547 320-480t46.5 113.5Q413-320 480-320t113.5-46.5ZM480-480Z"/></svg></div>
+                <div class="hidden"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M600-640 480-760l120-120 120 120-120 120Zm200 120-80-80 80-80 80 80-80 80ZM483-80q-84 0-157.5-32t-128-86.5Q143-253 111-326.5T79-484q0-146 93-257.5T409-880q-18 99 11 193.5T520-521q71 71 165.5 100T879-410q-26 144-138 237T483-80Zm0-80q88 0 163-44t118-121q-86-8-163-43.5T463-465q-61-61-97-138t-43-163q-77 43-120.5 118.5T159-484q0 135 94.5 229.5T483-160Zm-20-305Z"/></svg></div>
+            </div>
+        </div>
     </div>
 
     <!-- js teehee -->
     <script>
         const landingPage = document.querySelector('landing-page');
 
-        const miniPage = document.querySelector('mini-page');
-        miniPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="mini"]').removeAttribute('disabled'));
-        miniPage.addEventListener('reload-leaderboards', () => landingPage.reloadLeaderboards(['mini']));
-
-        const dailyPage = document.querySelector('daily-page');
-        dailyPage.addEventListener('loaded', () => document.querySelector('.nav-panel .button[page="daily"]').removeAttribute('disabled'));
-        dailyPage.addEventListener('reload-leaderboards', () => landingPage.reloadLeaderboards(['daily']));
-
         // Set up the nav buttons
         const navSelectionHighlighter = document.querySelector('.nav-panel .selection-highlight');
-        const navContainer = document.querySelector('.nav-panel');
+        const navContainer = document.querySelector('.nav-panel .container.game-buttons');
 
         for(const [i, button] of Array.from(navContainer.children).entries()){
             button.addEventListener('click', () => {
@@ -105,16 +101,27 @@
                 const currentButton = navContainer.querySelector('.selected');
                 currentButton.classList.remove('selected');
                 
-                const currentPage = document.querySelector(`.page.${currentButton.getAttribute('page')}-page`);
-                currentPage.hide();
+                const currentPage = document.querySelector(`.game-page-container[gameCode="${currentButton.getAttribute('page')}"]`);
+                currentPage.classList.add('hidden');
 
                 navSelectionHighlighter.style.top = `${(i * 60) + 15}px`;
                 button.classList.add('selected');
 
-                const newPage = document.querySelector(`.page.${button.getAttribute('page')}-page`);
-                newPage.show();
+                const newPage = document.querySelector(`.game-page-container[gameCode="${button.getAttribute('page')}"]`);
+                newPage.classList.remove('hidden');
             });
         }
+
+        //Swap lightmode and dark mode
+        const lightmodeToggle = document.querySelector('.lightmode-toggle');
+        lightmodeToggle.addEventListener('click', () => {
+            const lightmode = lightmodeToggle.toggleAttribute('light-mode');
+
+            lightmodeToggle.setAttribute('title', lightmode ? 'Switch to dark mode' : 'Switch to light mode');
+            document.querySelector('body').classList.toggle('darkmode', !lightmode);
+
+            for(const icon of lightmodeToggle.children){ icon.classList.toggle('hidden'); }
+        });
     </script>
 </body>
 </html>

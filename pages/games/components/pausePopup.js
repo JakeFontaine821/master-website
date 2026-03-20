@@ -15,12 +15,12 @@ AddStyle(`
         position: relative;
         width: 500px;
         height: 550px;
-        background-color: var(--background-light);
         box-shadow: 0px 0px 10px 5px #00000033;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        background-color: var(--background);
     }
 
     .popup .header{

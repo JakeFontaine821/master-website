@@ -21,9 +21,9 @@ AddStyle(`
     .drop-down .dropdown-container{
         position: absolute;
         top: 50px;
-        background-color: var(--background-light);
         z-index: 999;
-    }    
+        background-color: var(--background);
+    }
 `);
 
 export default class DropDown extends HTMLElement{

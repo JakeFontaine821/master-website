@@ -34,9 +34,10 @@ app.get('/games/daily', (req, res) => res.json(Games.gameBoards.get('dailyCrossw
 app.get('/games/connections', (req, res) => res.json(Games.gameBoards.get('connections')));
 app.get('/games/letterBoxed', (req, res) => res.json(Games.gameBoards.get('letterBoxed')));
 
-// ------------------------ MINI SPECFIC ------------------------
-app.get('/games/times/get', async (req, res) => res.json(await GamesDatabaseManager.getLeaderboardInfo()));
+// Players times get and set
+app.get('/games/times/get', async (req, res) => res.json(await GamesDatabaseManager.getLeaderboardInfo(req.query)));
 app.post('/games/times/set', async (req, res) => {
+    if(!req.body.gameTitle){               return res.json({ success: false, error: 'Missing parameter \'gameTitle\'' }); }
     if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
     if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
     if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }

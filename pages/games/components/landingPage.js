@@ -1,7 +1,5 @@
 import AddStyle from '../js/Styles.js';
-
-import './miniLeaderboardPanel.js';
-import './dailyLeaderboardPanel.js';
+import './leaderboardPanel.js';
 
 AddStyle(`
     .landing-page .header-row{
@@ -57,12 +55,12 @@ export default class landingPage extends HTMLElement{
                 <div class="header-row">Daily Games</div>
                 <div class="content-section">
                     <div class="tab-row">
-                        <div panel="mini-leaderboard-panel" style="background-color: var(--mini-theme);">MINI</div>
-                        <div panel="daily-leaderboard-panel" style="background-color: var(--daily-theme);">DAILY</div>
+                        <div game-title="mini" style="background-color: var(--mini-theme);">MINI</div>
+                        <div game-title="daily" style="background-color: var(--daily-theme);">DAILY</div>
                     </div>
                     <div class="panel-container">
-                        <mini-leaderboard-panel></mini-leaderboard-panel>
-                        <daily-leaderboard-panel></daily-leaderboard-panel>
+                        <leaderboard-panel game-title="mini"></leaderboard-panel>
+                        <leaderboard-panel game-title="daily" class="hidden"></leaderboard-panel>
                     </div>
                 </div>
             </div>
@@ -71,8 +69,8 @@ export default class landingPage extends HTMLElement{
         // setup the panel stuff
         for(const tab of this.querySelectorAll('.tab-row > div')){
             tab.addEventListener('click', () => {
-                for(const panel of document.querySelectorAll('.panel-container > *')){
-                    panel.classList.toggle('hidden', !panel.classList.contains(tab.getAttribute('panel')));
+                for(const panel of document.querySelectorAll('.leaderboard-panel')){
+                    panel.classList.toggle('hidden', panel.getAttribute('game-title') !== tab.getAttribute('game-title'));
                 }
             });
         }
@@ -81,8 +79,8 @@ export default class landingPage extends HTMLElement{
     };
 
     async reloadLeaderboards(games=[]){
-        if(games.includes('all') || games.includes('mini')){ this.querySelector('.mini-leaderboard-panel').loadPage(); }
-        if(games.includes('all') || games.includes('daily')){ this.querySelector('.daily-leaderboard-panel').loadPage(); }
+        if(games.includes('all') || games.includes('mini')){ this.querySelector('.leaderboard-panel[game-title="mini"]').loadPage(); }
+        if(games.includes('all') || games.includes('daily')){ this.querySelector('.leaderboard-panel[game-title="daily"]').loadPage(); }
         // if(){} other games
     };
 

@@ -4,18 +4,18 @@ import AverageTimeBar from './averageTimeBar.js';
 import { formatSecondsToHMS } from '../js/utils.js';
 
 AddStyle(`
-    .daily-leaderboard-panel{
-        background-color: var(--daily-theme);
+    .leaderboard-panel{
+        background-color: var(--mini-theme);
     }
 
-    .daily-leaderboard-panel .leaderboard-row{
+    .leaderboard-panel .leaderboard-row{
         display: flex;
         justify-content: center;
         padding: 20px 0px;
         gap: 10px;
     }
 
-    .daily-leaderboard-panel .leaderboard-row > div{
+    .leaderboard-panel .leaderboard-row > div{
         display: flex;
         flex-direction: column;
         align-items; center;
@@ -25,43 +25,43 @@ AddStyle(`
         border-radius: 10px
     }
 
-    .daily-leaderboard-panel .leaderboard-row div b{
+    .leaderboard-panel .leaderboard-row div b{
         display: flex;
         justify-content: center;
     }
 
-    .daily-leaderboard-panel .leaderboard-outer{
+    .leaderboard-panel .leaderboard-outer{
         overflow-x: hidden;
         overflow-y: auto;
     }
 
-    .daily-leaderboard-panel .avg-time-row{
+    .leaderboard-panel .avg-time-row{
         display: flex;
         justify-content: center;
     }
 
-    .daily-leaderboard-panel .avg-time-row > div{
+    .leaderboard-panel .avg-time-row > div{
         display: flex;
         flex-direction: column;
     }
 
-    .daily-leaderboard-panel .avg-time-row .flex-row{
+    .leaderboard-panel .avg-time-row .flex-row{
         display: flex;
     }
 
-    .daily-leaderboard-panel .avg-time-display{
+    .leaderboard-panel .avg-time-display{
         display: flex;
     }
 
-    .daily-leaderboard-panel .left-side{
+    .leaderboard-panel .left-side{
         position: relative;
     }
 
-    .daily-leaderboard-panel .bar-graph{
+    .leaderboard-panel .bar-graph{
         display: flex;
     }
 
-    .daily-leaderboard-panel .hover-line{
+    .leaderboard-panel .hover-line{
         position: absolute;
         top: 0px;
         width: 900px;
@@ -69,7 +69,7 @@ AddStyle(`
         pointer-events: none;
     }
 
-    .daily-leaderboard-panel .date-display{
+    .leaderboard-panel .date-display{
         fill: var(--text);
         width: 900px;
         white-space: nowrap;
@@ -79,7 +79,7 @@ AddStyle(`
         height: 30px;
     }
 
-    .daily-leaderboard-panel .date-display > div{
+    .leaderboard-panel .date-display > div{
         width: 200px;
         display: flex;
         align-items center;
@@ -87,21 +87,27 @@ AddStyle(`
         position: absolute;
     }
 
-    .daily-leaderboard-panel .time-display{
+    .leaderboard-panel .time-display{
         transform: translateY(-12px);
     }
 `);
 
-export default class DailyLeaderboardPanel extends HTMLElement{
+export default class LeaderboardPanel extends HTMLElement{
     constructor(){
         super();
 
-        this.classList.add('daily-leaderboard-panel', 'hidden');
+        this.classList.add('leaderboard-panel');
 
         this.innerHTML = `
             <div class="leaderboard-row">
                 <div class="daily-board">
                     <b>Today's Leaderboard</b>
+                    <div class="leaderboard-outer">
+                        <div class="leaderboard-inner"></div>
+                    </div>
+                </div>
+                <div class="monthly-board">
+                    <b>This Month's Leaderboard</b>
                     <div class="leaderboard-outer">
                         <div class="leaderboard-inner"></div>
                     </div>
@@ -130,17 +136,21 @@ export default class DailyLeaderboardPanel extends HTMLElement{
                 More stats to come :)
             </div>
         `;
+
+        this.gameTitle = this.getAttribute('game-title');
     };
 
     async loadPage(){
-        let dailyleaderboardInfo;
-        while (!dailyleaderboardInfo?.success) {
+        let leaderboardInfo;
+        while (!leaderboardInfo?.success) {
             try{
-                const response = await fetch('/games/daily/times/get');
+                const url = `/games/times/get?gameTitle=${this.gameTitle}`;
+                console.log(url)
+                const response = await fetch(url);
                 if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
-                dailyleaderboardInfo = await response.json();
-                if(!dailyleaderboardInfo.success){ throw new Error(`Failed fetching from server: ${dailyleaderboardInfo.error}`); }
+                leaderboardInfo = await response.json();
+                if(!leaderboardInfo.success){ throw new Error(`Failed fetching from server: ${leaderboardInfo.error}`); }
             }
             catch (err){
                 console.error('Api call failed, retrying in 5s...', err);
@@ -149,25 +159,31 @@ export default class DailyLeaderboardPanel extends HTMLElement{
         }
 
         // Sort the entries for the day list
-        const sortedTodayTimes = dailyleaderboardInfo.today.sort((a, b) => a.time - b.time);
         const dailyboardInner = this.querySelector('.daily-board .leaderboard-inner');
         while(dailyboardInner.firstChild){ dailyboardInner.firstChild.remove(); }
-        for(const [i, entry] of sortedTodayTimes.entries()){
+        for(const [i, entry] of leaderboardInfo.today.entries()){
             const newEntry = new leaderboardEntry(entry, i+1);
             dailyboardInner.appendChild(newEntry);
         }
 
-        const sortedBestTimes = dailyleaderboardInfo.allTime.sort((a, b) => a.placing - b.placing);
+        const monthlyboardInner = this.querySelector('.monthly-board .leaderboard-inner');
+        while(monthlyboardInner.firstChild){ monthlyboardInner.firstChild.remove(); }
+        for(const [i, entry] of leaderboardInfo.monthly.entries()){
+            const newEntry = new leaderboardEntry(entry, i+1, true);
+            monthlyboardInner.appendChild(newEntry);
+        }
+
         const alltimeboardInner = this.querySelector('.all-time-board .leaderboard-inner');
         while(alltimeboardInner.firstChild){ alltimeboardInner.firstChild.remove(); }
-        for(const [i, entry] of sortedBestTimes.entries()){
+        for(const [i, entry] of leaderboardInfo.allTime.entries()){
             const newEntry = new leaderboardEntry(entry, i+1, true);
             alltimeboardInner.appendChild(newEntry);
         }
 
         // averge times and such
-        const timesArray = dailyleaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
-        const maxTime = Math.max(...dailyleaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
+        console.log(leaderboardInfo)
+        const timesArray = leaderboardInfo.averageTimes.map((time, index) => Object.assign(time, { index })).reverse();
+        const maxTime = Math.max(...leaderboardInfo.averageTimes.map(timeObj => timeObj.averageTime));
         const barGraph = this.querySelector('.bar-graph');
 
         // set the time and date from the hovered bar
@@ -204,4 +220,4 @@ export default class DailyLeaderboardPanel extends HTMLElement{
         setDateTime(lastEntry.averageTime, lastEntry.dateString, timesArray.length-1);
     };
 };
-customElements.define('daily-leaderboard-panel', DailyLeaderboardPanel);
+customElements.define('leaderboard-panel', LeaderboardPanel);
