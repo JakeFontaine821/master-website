@@ -1,8 +1,6 @@
 const path = require('path');
 const Utils = require(path.join(__dirname, '../Utils.js'));
-const GamesDatabase_Mini = require(path.join(__dirname, './GamesDatabase_Mini.js'));
-const GamesDatabase_Daily = require(path.join(__dirname, './GamesDatabase_Daily.js'));
-const GamesDatabase_Maze = require(path.join(__dirname, './GamesDatabase_Maze.js'));
+const GamesDatabaseManager = require(path.join(__dirname, './GamesDatabaseManager.js'));
 
 async function getMiniCrossword(){
     const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/mini.json';
@@ -29,8 +27,8 @@ async function getMiniCrossword(){
    return await Utils.sendRequest(url, params);
 };
 
-async function getDaily(){
-    const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily.json';
+async function getMidiCrossword(){
+    const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/midi.json';
     const params = {
         'headers': {
             'accept': '*/*',
@@ -48,6 +46,33 @@ async function getDaily(){
             'x-games-auth-bypass': 'true',
             'cookie': 'nyt-a=mrKsejlFHMcu4nsIlw3PBF; nyt-purr=cfshcfhshckfhdfshgas2taaa; _helpjuice_session_v2=24wVanuoHlBFA51quKtCXyKVzniSQufVPXaArF2jz8WfoCZ%2FMphvlj2PC7uETdsRDF%2FHdpWXx%2Fa3FEyuReifK8%2BUp8Z6eWVSI0%2BzfrLjl2zxhjerDLBueEEsY%2BCIE5bjiyqHPOhYz7PaTITzoRc1qRSvuSUuoku3vLViS%2BqaflWZPE3zgllfNPJzpC79JPuz9A7Yru18jVfxkNeX3KkERtUioUONkUPwnjX0FlYzZfCPURdMwyjcfoje2pskcghpeVh6GAIedwHePZpChK55yw7osjwCHbV6f1e6mKwxrSvPms1N9JAVhabYd30I9crR1bun--YiJ5K3p4a2kwqveg--LuhBVyG4XL1MnyZzBqhWeA%3D%3D; nyt-gdpr=0; nyt-geo=US; nyt-m=CEFE1284FAD1C7EDF1488BD52DD22D07&n=i.2&pr=l.4.0.0.0.0&ft=i.0&iir=i.0&e=i.1756735200&prt=i.0&uuid=s.d89028b4-6a04-42a1-af16-bff58d5f436b&g=i.1&vp=i.0&ier=i.0&iub=i.0&igd=i.1&t=i.0&v=i.0&rc=i.0&iga=i.0&imv=i.0&ird=i.0&ira=i.0&ifv=i.0&s=s.crosswords&iue=i.0&iru=i.1&fv=i.0&cav=i.1&imu=i.1&ica=i.0&er=i.1756608323&vr=l.4.0.0.0.0&igu=i.1&igf=i.0; nyt-jkidd=uid=0&lastRequest=1756608323447&activeDays=%5B0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C1%2C0%2C1%2C1%2C0%2C1%5D&adv=4&a7dv=4&a14dv=4&a21dv=4&lastKnownType=anon&newsStartDate=&entitlements=; _dd_s=rum=0&expire=1756609689306',
             'Referer': 'https://www.nytimes.com/crosswords/game/daily'
+        },
+        'body': null,
+        'method': 'GET'
+    };
+
+   return await Utils.sendRequest(url, params);
+};
+
+async function getDailyCrossword(){
+    const url = 'https://www.nytimes.com/svc/crosswords/v6/puzzle/daily.json';
+    const params = {
+        'headers': {
+            'accept': '*/*',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            'accept-language': 'en-US,en;q=0.9',
+            'content-type': 'application/x-www-form-urlencoded',
+            'cookie': 'nyt-a=mrKsejlFHMcu4nsIlw3PBF; nyt-purr=cfshcfhshckfhdfshgas2taaa; nyt-m=3547664B81DFDD52B046E51DE1CA84C2&v=i.0&rc=i.0&ft=i.0&imu=i.1&iub=i.0&t=i.0&er=i.1757211087&prt=i.0&iir=i.0&uuid=s.d89028b4-6a04-42a1-af16-bff58d5f436b&vp=i.0&ird=i.0&igd=i.1&imv=i.0&ira=i.0&cav=i.1&iue=i.0&ifv=i.0&iru=i.1&igf=i.0&s=s.letterboxed&e=i.1759327200&n=i.2&vr=l.4.0.0.0.0&g=i.1&pr=l.4.0.0.0.0&igu=i.1&ier=i.0&fv=i.0&ica=i.0&iga=i.0; datadome=xITbKzZd8mjRaW1_Q66w4QvPOiW5b7oDwRs62bemlbdEu7Y48fSP2wKRNHLG6hUdgJt5LMMClMwygTnOv_cr7QQxjeda0SSCwdYiOxfU8InBzZf6sKqCuKwH8~Eq_mGO; nyt-gdpr=0; nyt-geo=US; nyt-jkidd=uid=0&lastRequest=1772259894152&activeDays=%5B0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C0%2C1%5D&adv=1&a7dv=1&a14dv=1&a21dv=1&lastKnownType=anon&newsStartDate=&entitlements=',
+            'priority': 'u=1, i',
+            'referer': 'https://www.nytimes.com/crosswords/game/midi',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+            'x-games-auth-bypass': 'true'
         },
         'body': null,
         'method': 'GET'
@@ -91,90 +116,6 @@ async function getLetterBoxed(){
     return { success: false };
 };
 
-const MAZE_WIDTH = 13; // HAS TO BE ODD SO THERE IS A CENTER TO THE MAZE
-const MAZE_HEIGHT = 13; // HAS TO BE ODD SO THERE IS A CENTER TO THE MAZE
-function generateMaze(){
-    /************ CREATE GRID ARRAY ***************/
-    const grid = [];
-    for (let y = 0; y < MAZE_HEIGHT; y++) {
-        const row = [];            
-        for (let x = 0; x < MAZE_WIDTH; x++) {
-            row.push({
-                x,
-                y,
-                visited: false,
-                walls: { top: true, right: true, bottom: true, left: true }
-            })
-        }
-        grid.push(row);
-    }
-
-    /************ GENERATE MAZE ***************/
-    const stack = [];
-    const start = grid[Math.floor(MAZE_HEIGHT / 2)][Math.floor(MAZE_WIDTH / 2)];
-    start.visited = true;
-    stack.push(start);
-
-    while (stack.length) {
-        const current = stack[stack.length - 1];
-
-        const { x, y } = current;
-        const neighbors = [];
-
-        const directions = [
-            { dir: 'top', nx: x, ny: y - 1 },
-            { dir: 'right', nx: x + 1, ny: y },
-            { dir: 'bottom', nx: x, ny: y + 1 },
-            { dir: 'left', nx: x - 1, ny: y },
-        ];
-
-        for (const { dir, nx, ny } of directions) {
-            if (nx < 0 || ny < 0 || nx >= MAZE_WIDTH || ny >= MAZE_HEIGHT){ continue; }
-
-            const neighbor = grid[ny][nx];
-            if (neighbor && !neighbor.visited) { neighbors.push({ direction: dir, cell: neighbor }); }
-        }
-
-        if (!neighbors.length) {
-            stack.pop();
-            continue;
-        }
-
-        const { direction, cell: next } = neighbors[Math.floor(Math.random() * neighbors.length)];
-
-        const opposite = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' };
-        current.walls[direction] = false;
-        next.walls[opposite[direction]] = false;
-
-        next.visited = true;
-        stack.push(next);
-    }    
-
-    /************ ENCODE MAZE SO THE FRONTEND CAN DRAW IT ***************/
-    const encodedGrid = [];
-    for(const row of grid){
-        const encodedRow = row.map((cell) => {
-            const encodeArray = [];
-            for(const dir of Object.values(cell.walls)){ encodeArray.push(Number(dir)); }
-            return encodeArray.join('');
-        });
-        encodedGrid.push(encodedRow);
-    }
-    
-    /************ PICK A RANDOM CORNER TO BE THE GOAL ***************/
-    const goal = [Math.random() >= .5 ? 1 : MAZE_WIDTH, Math.random() >= .5 ? 1 : MAZE_HEIGHT];
-
-    /************ WRAP MAZE IN BLANK SPACE ***************/
-    encodedGrid.splice(0, 0, Array.from(new Array(MAZE_WIDTH), () => '1111')); // top
-    encodedGrid.push(Array.from(new Array(MAZE_WIDTH), () => '1111')); // bottom
-
-    for (let y = 0; y < encodedGrid.length; y++) {
-        encodedGrid[y].splice(0, 0, '1111'); // left
-        encodedGrid[y].push('1111'); // right
-    }
-
-    return { grid: encodedGrid, goal: goal };
-};
 
 const gamesResponses = new Map();
 
@@ -183,29 +124,25 @@ async function updateGames(){
 
     const miniResponse = await getMiniCrossword();
     gamesResponses.set('miniCrossword', miniResponse);
-    GamesDatabase_Mini.addNewGameBoard(miniResponse);
+    GamesDatabaseManager.addNewGameBoard('mini', miniResponse);
 
-    const dailyResponse = await getDaily();
-    gamesResponses.set('daily', dailyResponse);
-    GamesDatabase_Daily.addNewGameBoard(dailyResponse);
+    const midiResponse = await getMidiCrossword();
+    gamesResponses.set('midiCrossword', midiResponse);
+    GamesDatabaseManager.addNewGameBoard('midi', midiResponse);
+
+    const dailyResponse = await getDailyCrossword();
+    gamesResponses.set('dailyCrossword', dailyResponse);
+    GamesDatabaseManager.addNewGameBoard('daily', dailyResponse);
 
     const connectionsResponse = await getConnections();
     gamesResponses.set('connections', connectionsResponse);
 
     const letterBoxedResponse = await getLetterBoxed();
     gamesResponses.set('letterBoxed', letterBoxedResponse);
-
-    const grid = generateMaze();
-    gamesResponses.set('maze', grid);
-    GamesDatabase_Maze.addNewGameBoard(grid);
 };
 updateGames();
 
 module.exports = {
     gameBoards: gamesResponses,
-    getMiniCrossword,
-    getDaily,
-    getConnections,
-    getLetterBoxed,
     updateGames,
 };

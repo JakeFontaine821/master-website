@@ -8,7 +8,7 @@ AddStyle(`
     .grid-cell{
         aspect-ratio: 1;
         position: relative;
-        border: 1px solid gray;
+        border: 1px solid var(--background-inverse);
         cursor: pointer;
     }
 

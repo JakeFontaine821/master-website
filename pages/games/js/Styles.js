@@ -8,15 +8,9 @@ export default AddStyle;
 AddStyle(`
     /************************** GLOBAL STYLES **************************/
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 
     :root{
-        --text: #1f1f1f;
-        --background-light: #f6f6f6;
-        --background-dark: #1f1f3f;
-        --highlight-background: #c3d7e6;
-        --shadow-background: #afafaf22;
-        --hover: #95c3e6;
-        --accent: #e19b9b;
         --correct: #3333cc;
         --incorrect: #cc3333;
 
@@ -33,14 +27,54 @@ AddStyle(`
         height: 100vh;
         margin: 0;
         padding: 0;
-        background-color: var(--background-light);
         overflow: hidden;
+        background-color: var(--background);
+        color: var(--text);
 
-        font-family: "Open Sans", sans-serif;
+        /*font-family: "Open Sans", sans-serif;
         font-optical-sizing: auto;
         font-weight: 400;
         font-style: normal;
-        font-variation-settings: "wdth" 100;
+        font-variation-settings: "wdth" 100;*/
+
+        font-family: "Josefin Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
+
+        --text: #060906;
+        --background: #f9fbfa;
+        --primary: #74a175;
+        --secondary: #acbfc7;
+        --accent: #8d6b9f;
+
+        --text-inverse: #f6f9f6;
+        --background-inverse: #040605;
+        --primary-inverse: #5f8c60;
+        --secondary-inverse: #384a52;
+        --accent-inverse: #a77bae;
+
+        --hover: #95c3e6;
+        --hover-alt: #c3d7e6;
+        --shadow-background: #afafaf22;
+    }
+
+    body.darkmode{
+        --text-inverse: #060906;
+        --background-inverse: #f9fbfa;
+        --primary-inverse: #74a175;
+        --secondary-inverse: #acbfc7;
+        --accent-inverse: #8d6b9f;
+
+        --text: #f6f9f6;
+        --background: #040605;
+        --primary: #5f8c60;
+        --secondary: #384a52;
+        --accent: #a77bae;
+
+        --hover: #6496bd;
+        --hover-alt: #47596d;
+        --shadow-background: #d6d6d6;
     }
 
     body *{

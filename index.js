@@ -22,72 +22,39 @@ app.get('/pixelpainter', (req, res) => res.sendFile(path.join(__dirname, '/pages
 /*                          GAMES                                                     */
 /**************************************************************************************/
 const Games = require(path.join(__dirname, './backend/games/Games.js'));
-const GamesDatabase_Mini = require(path.join(__dirname, './backend/games/GamesDatabase_Mini.js'));
-const GamesDatabase_Daily = require(path.join(__dirname, './backend/games/GamesDatabase_Daily.js'));
-const GamesDatabase_Maze = require(path.join(__dirname, './backend/games/GamesDatabase_Maze.js'));
+const GamesDatabaseManager = require(path.join(__dirname, './backend/games/GamesDatabaseManager.js'));
 
 // Serve the webpage
 app.get('/games', (req, res) => res.sendFile(path.join(__dirname, '/games/index.html')));
 
 // Get the game's data
 app.get('/games/mini', (req, res) => res.json(Games.gameBoards.get('miniCrossword')));
-app.get('/games/daily', (req, res) => res.json(Games.gameBoards.get('daily')));
+app.get('/games/midi', (req, res) => res.json(Games.gameBoards.get('midiCrossword')));
+app.get('/games/daily', (req, res) => res.json(Games.gameBoards.get('dailyCrossword')));
 app.get('/games/connections', (req, res) => res.json(Games.gameBoards.get('connections')));
 app.get('/games/letterBoxed', (req, res) => res.json(Games.gameBoards.get('letterBoxed')));
-app.get('/games/maze', (req, res) => res.json(Games.gameBoards.get('maze')));
 
-// ------------------------ MINI SPECFIC ------------------------
-app.get('/games/mini/times/get', async (req, res) => res.json(await GamesDatabase_Mini.getLeaderboardInfo()));
-app.post('/games/mini/times/set', async (req, res) => {
+// Players times get and set
+app.get('/games/times/get', async (req, res) => res.json(await GamesDatabaseManager.getLeaderboardInfo(req.query)));
+app.post('/games/times/set', async (req, res) => {
+    if(!req.body.gameTitle){               return res.json({ success: false, error: 'Missing parameter \'gameTitle\'' }); }
     if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
     if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
     if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
     if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
     if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
 
-    res.json(await GamesDatabase_Mini.addTimeEntry(req.body));
-});
-
-// ------------------------ DAILY SPECFIC ------------------------
-app.get('/games/daily/times/get', async (req, res) => res.json(await GamesDatabase_Daily.getLeaderboardInfo()));
-app.post('/games/daily/times/set', async (req, res) => {
-    if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
-    if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
-    if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
-    if(req.body.checksUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'checksUsed\'' }); }
-    if(req.body.revealUsed === undefined){ return res.json({ success: false, error: 'Missing parameter \'revealUsed\'' }); }
-
-    res.json(await GamesDatabase_Daily.addTimeEntry(req.body));
-});
-
-// ------------------------ MAZE SPECFIC ------------------------
-app.get('/games/maze/times/get', async (req, res) => res.json(await GamesDatabase_Maze.getLeaderboardInfo()));
-app.post('/games/maze/times/set', async (req, res) => {
-    if(!req.body.name){                    return res.json({ success: false, error: 'Missing parameter \'name\'' }); }
-    if(!req.body.time){                    return res.json({ success: false, error: 'Missing parameter \'time\'' }); }
-    if(!req.body.dateString){              return res.json({ success: false, error: 'Missing parameter \'dateString\'' }); }
-
-    res.json(await GamesDatabase_Maze.addTimeEntry(req.body));
+    res.json(await GamesDatabaseManager.addTimeEntry(req.body));
 });
 
 /**************************************************************************************/
 /*                    GAMES DEV PAGE                                                  */
 /**************************************************************************************/
 app.get('/games/dev', (req, res) => res.sendFile(path.join(__dirname, '/pages/games-dev/index.html')));
-app.get('/games/dev/times', async (req, res) => {
-    const allTimesArray = [];
-    allTimesArray.push(...GamesDatabase_Mini.getAllTimeEntries().entries.map(entry => ({ game: 'mini', ...entry})));
-    allTimesArray.push(...GamesDatabase_Daily.getAllTimeEntries().entries.map(entry => ({ game: 'daily', ...entry})));
-    allTimesArray.push(...GamesDatabase_Maze.getAllTimeEntries().entries.map(entry => ({ game: 'maze', ...entry})));
-    res.json(allTimesArray);
-});
+app.get('/games/dev/times', async (req, res) => res.json(GamesDatabaseManager.getAllTimeEntries().entries));
 app.post('/games/dev/times/delete', async (req, res) => {
-    if(!req.body.game){ return res.json({ success: false, error: 'Missing parameter \'game\'' }); }
     if(!req.body.id){ return res.json({ success: false, error: 'Missing parameter \'id\'' }); }
-    
-    if(req.body.game === 'mini'){ return res.json(await GamesDatabase_Mini.deleteTimeEntry(req.body)); }
-    else if(req.body.game === 'daily'){ return res.json(await GamesDatabase_Daily.deleteTimeEntry(req.body)); }
-    else if(req.body.game === 'maze'){ return res.json(await GamesDatabase_Maze.deleteTimeEntry(req.body)); }
+    return res.json(await GamesDatabaseManager.deleteTimeEntry(req.body));
 });
 
 /**************************************************************************************/

@@ -1,7 +1,6 @@
 const path = require('path');
 const Database = require('better-sqlite3');
-const newdb = new Database(path.join(__dirname, '/backend/games/gamesDatabase.db'));
-const db = new Database(path.join(__dirname, '/backend/games/nytimesDatabase.db'));
+const db = new Database(path.join(__dirname, '/backend/games/gamesDatabase.db'));
 const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 
 /*******************************************************************************************/
@@ -35,7 +34,60 @@ const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 /*******************************************************************************************/
 /*                                  USED TO cREATE AND FILL TABLES WITH DUMMIE DATA        */
 /*******************************************************************************************/
-// db.prepare(`
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS game_times (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gameTitle TEXT,
+        name TEXT,
+        time REAL,
+        dateString TEXT,
+        checksUsed INTEGER,
+        revealUsed TEXT
+    )
+`).run();
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS game_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        gameTitle TEXT,
+        gameBoard TEXT,
+        dateString TEXT,
+        averageTime REAL
+    )
+`).run();
+
+const addEntryStatement_mini = db.prepare(`INSERT INTO game_times (gameTitle, name, time, dateString, checksUsed, revealUsed) VALUES (@gameTitle, @name, @time, @dateString, @checksUsed, @revealUsed)`);
+const time = Math.floor(Math.random() * 120);
+for (let i = 1; i <= 90; i++) {
+    const entry = {
+        gameTitle: ['mini', 'midi', 'daily'][Math.floor(Math.random() * 3)],
+        name: ['','',''].map(a => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.round(Math.random() * 25)]).join(''),
+        time: time + i,
+        dateString: new Date(Date.now() - (Math.floor(Math.random() * 7) * 86400000)).toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
+        checksUsed: Math.floor(Math.random() * 20),
+        revealUsed: 'false'
+    };
+
+    addEntryStatement_mini.run(entry);
+}
+
+const addEntryStatement_mini_data = db.prepare(`INSERT INTO game_data (gameTitle, gameBoard, dateString, averageTime) VALUES (@gameTitle, @gameBoard, @dateString, @averageTime)`);
+const entries = Array.from(new Array(30), (_, i) => {
+    return {
+        gameTitle: ['mini', 'midi', 'daily'][Math.floor(Math.random() * 3)],
+        gameBoard: '{}',
+        dateString: new Date(Date.now() - (86400000 * i)).toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
+        averageTime: Math.floor(Math.random() * 120)
+    }
+}).reverse();
+for(const entry of entries){
+    addEntryStatement_mini_data.run(entry);
+}
+
+/*******************************************************************************************/
+/*                                  COPY OVER ALL ENTRIES FROM ONE DATABASE TO ANOTHER     */
+/*******************************************************************************************/
+// newdb.prepare(`
 //     CREATE TABLE IF NOT EXISTS mini_times (
 //         id INTEGER PRIMARY KEY AUTOINCREMENT,
 //         name TEXT,
@@ -48,7 +100,7 @@ const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 //     )
 // `).run();
 
-// db.prepare(`
+// newdb.prepare(`
 //     CREATE TABLE IF NOT EXISTS mini_data (
 //         id INTEGER PRIMARY KEY AUTOINCREMENT,
 //         gameBoard TEXT,
@@ -57,93 +109,40 @@ const Utils = require(path.join(__dirname, '/backend/Utils.js'));
 //     )
 // `).run();
 
-// const addEntryStatement_mini = db.prepare(`INSERT INTO mini_times (name, time, dateString, checksUsed, revealUsed, topTen, placing) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed, @topTen, @placing)`);
-// const time = Math.floor(Math.random() * 120);
-// for (let i = 1; i <= 30; i++) {
-//     const entry = {
-//         name: ['','',''].map(a => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.round(Math.random() * 25)]).join(''),
-//         time: time + i,
-//         dateString: new Date(Date.now() - (Math.floor(Math.random() * 7) * 86400000)).toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
-//         checksUsed: Math.floor(Math.random() * 20),
-//         revealUsed: 'false',
-//         topTen: i <= 10 ? 'true' : 'false',
-//         placing: i <= 10 ? i : 10000
-//     };
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS daily_times (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         name TEXT,
+//         time REAL,
+//         dateString TEXT,
+//         checksUsed INTEGER,
+//         revealUsed TEXT,
+//         topTen TEXT,
+//         placing INTEGER
+//     )
+// `).run();
 
-//     addEntryStatement_mini.run(entry);
-// }
+// newdb.prepare(`
+//     CREATE TABLE IF NOT EXISTS daily_data (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         gameBoard TEXT,
+//         dateString TEXT,
+//         averageTime REAL
+//     )
+// `).run();
 
-// const addEntryStatement_mini_data = db.prepare(`INSERT INTO mini_data (gameBoard, dateString, averageTime) VALUES (@gameBoard, @dateString, @averageTime)`);
-// const entries = ['',''].map((_, i) => {
-//     return {
-//         gameBoard: '{}',
-//         dateString: new Date(Date.now() - (86400000 * i)).toLocaleDateString("en-CA", { timeZone: "America/New_York" }),
-//         averageTime: Math.floor(Math.random() * 120)
+// const tableNames = ['mini_times', 'mini_data'/*, 'daily_times', 'daily_data'*/];
+// for(const table of tableNames){
+//     // Get all the entries from the old database
+//     const allEntries = db.prepare(`SELECT * from ${table}`).all();
+//     console.log('got all entries from ', table);
+
+//     // Enter all entries into new database and table
+//     for(const entry of allEntries){
+//         delete entry['id'];
+//         const keys = Object.keys(entry);
+//         newdb.prepare(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (${keys.map(v => `@${v}`).join(', ')})`).run(entry);
 //     }
-// }).reverse();
-// for(const entry of entries){
-//     addEntryStatement_mini_data.run(entry);
+
+//     console.log('All entries copied over :)')
 // }
-
-/*******************************************************************************************/
-/*                                  COPY OVER ALL ENTRIES FROM ONE DATABASE TO ANOTHER     */
-/*******************************************************************************************/
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS mini_times (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        time REAL,
-        dateString TEXT,
-        checksUsed INTEGER,
-        revealUsed TEXT,
-        topTen TEXT,
-        placing INTEGER
-    )
-`).run();
-
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS mini_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        gameBoard TEXT,
-        dateString TEXT,
-        averageTime REAL
-    )
-`).run();
-
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_times (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        time REAL,
-        dateString TEXT,
-        checksUsed INTEGER,
-        revealUsed TEXT,
-        topTen TEXT,
-        placing INTEGER
-    )
-`).run();
-
-newdb.prepare(`
-    CREATE TABLE IF NOT EXISTS daily_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        gameBoard TEXT,
-        dateString TEXT,
-        averageTime REAL
-    )
-`).run();
-
-const tableNames = ['mini_times', 'mini_data'/*, 'daily_times', 'daily_data'*/];
-for(const table of tableNames){
-    // Get all the entries from the old database
-    const allEntries = db.prepare(`SELECT * from ${table}`).all();
-    console.log('got all entries from ', table);
-
-    // Enter all entries into new database and table
-    for(const entry of allEntries){
-        delete entry['id'];
-        const keys = Object.keys(entry);
-        newdb.prepare(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (${keys.map(v => `@${v}`).join(', ')})`).run(entry);
-    }
-
-    console.log('All entries copied over :)')
-}

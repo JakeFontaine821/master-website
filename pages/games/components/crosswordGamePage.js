@@ -8,40 +8,50 @@ import './winPopup.js';
 import './dropDown.js';
 
 AddStyle(`
-    .mini-page .config-row{
+    .crossword-game-page .header-row{
+        font-size: 40px;
+        font-weight: 600;
+    }
+
+    .crossword-game-page .config-row{
         width: 100%;
         height: 50px;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 5px;
         fill: var(--text);
         border-top: 2px solid var(--shadow-background);
         border-bottom: 2px solid var(--shadow-background);
     }
 
-    .mini-page .config-row > *{
+    .crossword-game-page .config-row > *{
         user-select: none;
         cursor: pointer;
         display: flex;
-        align-self: center;
+        align-items: center;
+        gap: 5px;
     }
 
-    .mini-page .config-row > .dropdown-section{
+    .crossword-game-page .config-row > .dropdown-section{
         position: absolute;
         right: 0px;
     }
 
-    .mini-page .game-section{
+    .crossword-game-page .config-row > .back-section{
+        position: absolute;
+        left: 0px;
+    }
+
+    .crossword-game-page .game-section{
         flex: 1;
         display: flex;
         justify-content: center;
-        align-self: center;
+        align-items: center;
         gap: 20px;
     }
 
-    .mini-page .game-section .grid-section{
+    .crossword-game-page .game-section .grid-section{
         display: flex;
         flex-direction: column;
         justify-content: start;
@@ -49,96 +59,68 @@ AddStyle(`
         gap: 5px;
     }
 
-    .mini-page .game-section .current-clue{
+    .crossword-game-page .game-section .current-clue{
         padding: 10px 25px;
         width: 600px;
         height: 50px;
         display: flex;
         align-items: center;
-        background-color: var(--highlight-background);
+        background-color: var(--hover-alt);
     }
 
-    .mini-page .game-section .grid-container{
+    .crossword-game-page .game-section .grid-container{
         display: flex;
         flex-direction: column;
         justify-content: start;
         border: 2px solid black;
     }
 
-    .mini-page .list-container{
+    .crossword-game-page .list-container{
         display: flex;
         flex-direction: column;
         width: 200px;
+        padding: 10px 0px;
     }
 
-    .mini-page .list-container .list-title{
+    .crossword-game-page .list-container .list-title{
         text-align: left;
     }
 
-    .mini-page .list-container .list-outer{
-        flex: 1;
-        position: relative;
+    .crossword-game-page .list-container .list-outer{
+        height: 650px;
+        overflow-y: auto;
     }
 
-    .mini-page .list-container .list-inner{
+    .crossword-game-page .list-container .list-inner{
         display: flex;
         flex-direction: column;
-        position: absolute;
-    }
-
-    .mini-page .clue-row{
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding: 4px 15px;
-        gap: 6px;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .mini-page .clue-row:hover{
-        background-color: var(--hover);
-    }
-
-    .mini-page .clue-row.highlighted{
-        background-color: var(--hover);
-    }
-
-    .mini-page .clue-row.kinda-highlighted{
-        background-color: var(--highlight-background);
-    }
-
-    .mini-page .clue-row > div{
-        display: flex;
-        align-self: center;
-    }
-
-    .mini-page .clue-row .clue-label{
-        justify-content: end;
-    }
-
-    .mini-page .clue-row .clue{
-        justify-content: start;
-        flex: 1;
     }
 `);
 
-export default class MiniPage extends HTMLElement{
+export default class CrosswordGamePage extends HTMLElement{
     constructor(){
         super();
 
-        this.classList.add('mini-page', 'page', 'hidden');
+        this.classList.add('crossword-game-page', 'page', 'game-page');
+        this.game = this.getAttribute('game');
+        this.gameTitle = this.getAttribute('game-title');
 
         this.innerHTML = `
             <div class="page-container">
-                <div class="header-row">Mini Crossword :)</div>
+                <div class="header-row">${this.gameTitle}</div>
                 <div class="config-row">
-                    <div class="timer-display">00:00</div>
-                    <div class="pause-button"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M360-320h80v-320h-80v320Zm160 0h80v-320h-80v320ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></div>
+                    <div class="back-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M640-80 240-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
+                    </div>
+
+                    <div class="timer-section">
+                        <div class="timer-display">00:00</div>
+                        <div class="pause-button"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M360-320h80v-320h-80v320Zm160 0h80v-320h-80v320ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg></div>
+                    </div>
 
                     <div class="dropdown-section">
-                        <drop-down class="reveal-dropdown" header="Reveal" options="Cell,Word,Puzzle"></drop-down>
-                        <drop-down class="check-dropdown" header="Check" options="Cell,Word,Puzzle"></drop-down>
+                        <drop-down class="reveal-dropdown" title="Reveal" options="Cell,Word,Puzzle"></drop-down>
+                        <drop-down class="check-dropdown" title="Check" options="Cell,Word,Puzzle"></drop-down>
                     </div>
                 </div>
                 <div class="game-section">
@@ -169,7 +151,7 @@ export default class MiniPage extends HTMLElement{
 
             while (!apiCall) {
                 try{
-                    const response = await fetch('/games/mini');
+                    const response = await fetch(`/games/${this.game}`);
                     if(!response.ok){ throw new Error(`HTTP error, Status: ${response.status}`); };
 
                     apiCall = response;
@@ -180,8 +162,8 @@ export default class MiniPage extends HTMLElement{
                 }
             }
 
-            const miniJson = await apiCall.json();
-            const dataBody = miniJson.data.body[0];
+            const boardJson = await apiCall.json();
+            const dataBody = boardJson.data.body[0];
 
             // When clue row is clicked display info here
             const currentClueDisplay = this.querySelector('.current-clue');
@@ -190,9 +172,10 @@ export default class MiniPage extends HTMLElement{
             let direction = 0; // 1 for down
 
             this.saveObject = {
+                'gameTitle': this.game,
                 'name': 'AAA',
                 'time': 0,
-                'dateString': miniJson.data.publicationDate,
+                'dateString': boardJson.data.publicationDate,
                 'checksUsed': 0,
                 'revealUsed': 'false',
             };
@@ -492,7 +475,7 @@ export default class MiniPage extends HTMLElement{
                     this.saveObject['name'] = name;
                     this.saveObject['time'] = parseFloat((this.playTime + (this.elapsedMilliseconds / 1000)).toFixed(4));
 
-                    const saveResponse = await fetch('/games/mini/times/set', {
+                    const saveResponse = await fetch('/games/times/set', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(this.saveObject)
@@ -509,6 +492,9 @@ export default class MiniPage extends HTMLElement{
                 }
                 catch(err){ console.error('Error saving time: ', err); }
             });
+
+            const backButton = this.querySelector('.back-section');
+            backButton.addEventListener('click', () => this.dispatchEvent(new Event('close')));
 
             this.dispatchEvent(new Event('loaded'));
         })();
@@ -560,4 +546,4 @@ export default class MiniPage extends HTMLElement{
         this.classList.add('hidden');
     };
 };
-customElements.define('mini-page', MiniPage);
+customElements.define('crossword-game-page', CrosswordGamePage);

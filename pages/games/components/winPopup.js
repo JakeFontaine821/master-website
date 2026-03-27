@@ -35,7 +35,7 @@ export default class winPopup extends HTMLElement{
         this.innerHTML = `
             <div class="popup-container">
                 <div class="close-button"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></div>
-                <div class="header">You Win!</div>
+                <div class="title">You Win!</div>
                 <div class="time">00:00</div>
                 <div><i>Input initials for scoreboard i.e. 'AAA'</i></div>
                 <div class="win-initial-container">
