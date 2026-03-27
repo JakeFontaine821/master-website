@@ -66,7 +66,7 @@ function getLeaderboardInfo(params){
 };
 
 const addEntryStatement_gameTimes = db.prepare(`INSERT INTO game_times (gameTitle, name, time, dateString, checksUsed, revealUsed) VALUES (@gameTitle, @name, @time, @dateString, @checksUsed, @revealUsed)`);
-const updateEntryStatement_gameData = db.prepare(`UPDATE game_data SET averageTime=@averageTime WHERE dateString=@dateString`);
+const updateEntryStatement_gameData = db.prepare(`UPDATE game_data SET averageTime=@averageTime WHERE gameTitle=@gameTitle AND dateString=@dateString`);
 async function addTimeEntry(playData){
     // Add the entry to the data base
     try{ addEntryStatement_gameTimes.run(playData); }
@@ -91,8 +91,8 @@ async function addTimeEntry(playData){
     return { success: true };
 };
 
-const getEntryStatement_gameData = db.prepare(`SELECT * from game_data WHERE dateString=@dateString`);
-const addEntryStatement_gameData = db.prepare(`INSERT INTO game_data (gameBoard, dateString, averageTime) VALUES (@gameBoard, @dateString, @averageTime)`);
+const getEntryStatement_gameData = db.prepare(`SELECT * from game_data WHERE gameTitle=@gameTitle AND dateString=@dateString`);
+const addEntryStatement_gameData = db.prepare(`INSERT INTO game_data (gameTitle, gameBoard, dateString, averageTime) VALUES (@gameTitle, @gameBoard, @dateString, @averageTime)`);
 async function addNewGameBoard(gameTitle, gameBoard){
     const databaseObj = {
         gameTitle: gameTitle,
