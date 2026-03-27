@@ -23,6 +23,9 @@ AddStyle(`
         top: 50px;
         z-index: 999;
         background-color: var(--background);
+        border-left: 1px solid var(--background-inverse);
+        border-right: 1px solid var(--background-inverse);
+        border-bottom: 1px solid var(--background-inverse);
     }
 `);
 
@@ -33,11 +36,11 @@ export default class DropDown extends HTMLElement{
         this.classList.add('drop-down');
 
         this.innerHTML = `
-            <div class="header">${this.getAttribute('header')}</div>
+            <div class="title">${this.getAttribute('title')}</div>
             <div class="dropdown-container hidden"></div>
         `;
 
-        const header = this.querySelector('.header');
+        const header = this.querySelector('.title');
         const dropdownContainer = this.querySelector('.dropdown-container');
         header.addEventListener('click', () => {
             dropdownContainer.classList.remove('hidden');

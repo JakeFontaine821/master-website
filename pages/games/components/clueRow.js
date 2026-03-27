@@ -5,7 +5,7 @@ AddStyle(`
         width: 100%;
         display: flex;
         align-items: center;
-        padding: 4px 15px;
+        padding: 8px 15px;
         gap: 6px;
         cursor: pointer;
         user-select: none;
@@ -20,7 +20,7 @@ AddStyle(`
     }
 
     .clue-row.kinda-highlighted{
-        background-color: var(--highlight-background);
+        background-color: var(--hover-alt);
     }
 
     .clue-row > div{

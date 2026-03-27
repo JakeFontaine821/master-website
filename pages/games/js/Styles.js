@@ -11,9 +11,6 @@ AddStyle(`
     @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 
     :root{
-        --highlight-background: #c3d7e6;
-        --shadow-background: #afafaf22;
-        --hover: #95c3e6;
         --correct: #3333cc;
         --incorrect: #cc3333;
 
@@ -49,13 +46,17 @@ AddStyle(`
         --background: #f9fbfa;
         --primary: #74a175;
         --secondary: #acbfc7;
-        --accent: #939bb6;
+        --accent: #8d6b9f;
 
         --text-inverse: #f6f9f6;
         --background-inverse: #040605;
         --primary-inverse: #5f8c60;
         --secondary-inverse: #384a52;
-        --accent-inverse: #48506a;
+        --accent-inverse: #a77bae;
+
+        --hover: #95c3e6;
+        --hover-alt: #c3d7e6;
+        --shadow-background: #afafaf22;
     }
 
     body.darkmode{
@@ -63,13 +64,17 @@ AddStyle(`
         --background-inverse: #f9fbfa;
         --primary-inverse: #74a175;
         --secondary-inverse: #acbfc7;
-        --accent-inverse: #939bb6;
+        --accent-inverse: #8d6b9f;
 
         --text: #f6f9f6;
         --background: #040605;
         --primary: #5f8c60;
         --secondary: #384a52;
-        --accent: #48506a;
+        --accent: #a77bae;
+
+        --hover: #6496bd;
+        --hover-alt: #47596d;
+        --shadow-background: #d6d6d6;
     }
 
     body *{

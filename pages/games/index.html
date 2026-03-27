@@ -45,11 +45,6 @@
             align-items: center;
         }
 
-        .nav-panel .button:hover{
-            border: 1px solid var(--background-inverse);
-            border-radius: 15px;
-        }
-
         .nav-panel .selection-highlight{
             position: absolute;
             border-radius: 15px;
@@ -61,7 +56,6 @@
         }
     </style>
 
-    <script type="module" src="/games/components/landingPage.js"></script>
     <script type="module" src="/games/components/crosswordGamePage.js"></script>
     <script type="module" src="/games/components/gamePageContainer.js"></script>
 </head>
@@ -88,8 +82,6 @@
 
     <!-- js teehee -->
     <script>
-        const landingPage = document.querySelector('landing-page');
-
         // Set up the nav buttons
         const navSelectionHighlighter = document.querySelector('.nav-panel .selection-highlight');
         const navContainer = document.querySelector('.nav-panel .container.game-buttons');
@@ -102,13 +94,13 @@
                 currentButton.classList.remove('selected');
                 
                 const currentPage = document.querySelector(`.game-page-container[gameCode="${currentButton.getAttribute('page')}"]`);
-                currentPage.classList.add('hidden');
+                currentPage.hide();
 
                 navSelectionHighlighter.style.top = `${(i * 60) + 15}px`;
                 button.classList.add('selected');
 
                 const newPage = document.querySelector(`.game-page-container[gameCode="${button.getAttribute('page')}"]`);
-                newPage.classList.remove('hidden');
+                newPage.show();
             });
         }
 

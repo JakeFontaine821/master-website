@@ -65,7 +65,7 @@ function getLeaderboardInfo(params){
     return returnObj;
 };
 
-const addEntryStatement_gameTimes = db.prepare(`INSERT INTO game_times (name, time, dateString, checksUsed, revealUsed) VALUES (@name, @time, @dateString, @checksUsed, @revealUsed)`);
+const addEntryStatement_gameTimes = db.prepare(`INSERT INTO game_times (gameTitle, name, time, dateString, checksUsed, revealUsed) VALUES (@gameTitle, @name, @time, @dateString, @checksUsed, @revealUsed)`);
 const updateEntryStatement_gameData = db.prepare(`UPDATE game_data SET averageTime=@averageTime WHERE dateString=@dateString`);
 async function addTimeEntry(playData){
     // Add the entry to the data base
@@ -75,7 +75,7 @@ async function addTimeEntry(playData){
     // Update the average times for the day
     try{
         let todaysEntries;
-        const updateObj = { dateString: Utils.getEasternDateString() };
+        const updateObj = { gameTitle: playData.gameTitle, dateString: Utils.getEasternDateString() };
 
         try{ todaysEntries = getTodaysEntriesStatement.all(updateObj); }
         catch(err){ return { success: false, error: 'Error getting today\'s entries from database' }; }
