@@ -291,6 +291,7 @@ export default class GamePageContainer extends HTMLElement{
         }
 
         const lastEntry = timesArray[timesArray.length-1];
+        if(!lastEntry){ return; }
         setDateTime(lastEntry.averageTime, lastEntry.dateString, timesArray.length-1);
     };
 
