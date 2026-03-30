@@ -126,26 +126,14 @@ AddStyle(`
         top: 0px;
         border-bottom: 1px dashed black;
         pointer-events: none;
-    }
-
-    .game-page-container .date-display{
-        fill: var(--text);
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-    }
-
-    .game-page-container .date-display > div{
-        width: 200px;
-        display: flex;
-        align-items: end;
-        justify-content: end;
+        transition: .1s;
     }
 
     .game-page-container .time-display{
         transform: translateY(-10px);
         width: 50px;
         text-align: center;
+        transition: .1s;
     }
 `);
 
@@ -193,7 +181,6 @@ export default class GamePageContainer extends HTMLElement{
                         <div class="graph-side">
                             <div class="bar-graph"></div>
                             <div class="hover-line"></div>
-                            <div class="date-display">00-00-0000</div>
                         </div>
                         <div class="time-display">00:00</div>
                     </div>
@@ -261,38 +248,34 @@ export default class GamePageContainer extends HTMLElement{
 
         // set the time and date from the hovered bar
         const hoverLine = this.querySelector('.hover-line');
-        const dateDisplay = this.querySelector('.date-display');
         const timeDisplay = this.querySelector('.time-display');
-        const setDateTime = (time, date, index) => {
+        const setDateTime = (time) => {
             const distanceFromTop = (1 - (time / maxTime)) * 104;
 
             timeDisplay.innerHTML = formatSecondsToHMS(time);
             timeDisplay.style.paddingTop = `${distanceFromTop}px`;
             
             hoverLine.style.height = `${distanceFromTop}px`;
-
-            const [year, month, day] = date.split("-").map(Number);
-            dateDisplay.innerHTML = `
-                <div>
-                    ${new Date(Date.UTC(year, month - 1, day + 1)).toDateString()}
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"><path d="M440-120v-567l-64 63-56-56 160-160 160 160-56 56-64-63v567h-80Z"/></svg>
-                </div>
-            `;
-            dateDisplay.style.left = `${(index * 30) - 175}px`;
         };
 
         while(barGraph.firstChild){ barGraph.firstChild.remove(); }
         for (const [i, timeObj] of timesArray.entries()) {
             const newBar = new AverageTimeBar(timeObj, maxTime);
 
-            newBar.addEventListener('mouseover', () => setDateTime(timeObj.averageTime, timeObj.dateString, i));
+            newBar.addEventListener('select', () => {
+                barGraph.querySelector('.selected').classList.remove('selected'); 
+
+                newBar.classList.add('selected');
+                setDateTime(newBar.time);
+            });
 
             barGraph.appendChild(newBar);
         }
 
-        const lastEntry = timesArray[timesArray.length-1];
-        if(!lastEntry){ return; }
-        setDateTime(lastEntry.averageTime, lastEntry.dateString, timesArray.length-1);
+        const lastBar = barGraph.lastChild;
+        if(!lastBar){ return; }
+        lastBar.classList.add('selected');
+        setDateTime(lastBar.time);
     };
 
     switchPages = () => {
