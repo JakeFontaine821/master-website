@@ -42,7 +42,7 @@ AddStyle(`
         height: 20px;
         width: 150px;
         position: absolute;
-        right: 100%;
+        right: calc(50% + 5px);
         bottom: 0;
         transition: .1s;
         opacity: 0;
